@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        0.89
-Release:        0.3%{?alphatag}%{?dist}
+Release:        0.4%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -18,7 +18,9 @@ BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libpng-devel
 BuildRequires:  librsvg2
 BuildRequires:  libtool
+%if 0%{?fedora} < 18
 BuildRequires:  libudev-devel
+%endif
 BuildRequires:  libwayland-client-devel
 BuildRequires:  libwayland-server-devel
 BuildRequires:  libxcb-devel
@@ -73,6 +75,10 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Tue Jun 05 2012 Adam Jackson <ajax@redhat.com> 0.89-0.4
+- Rebuild for new libudev
+- Conditional buildreq for libudev-devel
+
 * Wed Apr 25 2012 Richard Hughes <richard@hughsie.com> 0.89-0.3
 - New package addressing Fedora package review concerns.
 
