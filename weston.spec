@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        0.89
-Release:        0.4%{?alphatag}%{?dist}
+Release:        0.5%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -75,6 +75,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.89-0.5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Tue Jun 05 2012 Adam Jackson <ajax@redhat.com> 0.89-0.4
 - Rebuild for new libudev
 - Conditional buildreq for libudev-devel
