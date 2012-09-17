@@ -1,13 +1,17 @@
-%define gitdate 20120424
+#define gitdate 20120424
 
 Name:           weston
-Version:        0.89
-Release:        0.5%{?alphatag}%{?dist}
+Version:        0.95.0
+Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
+%if 0%{?gitdate}
 Source0:        %{name}-%{gitdate}.tar.bz2
+%else
+Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
+%endif
 Source1:        make-git-snapshot.sh
 
 BuildRequires:  autoconf
@@ -23,9 +27,9 @@ BuildRequires:  libudev-devel
 %endif
 BuildRequires:  libwayland-client-devel
 BuildRequires:  libwayland-server-devel
+BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libxcb-devel
-BuildRequires:  libxkbcommon-devel
-BuildRequires:  libxkbcommon-devel
+BuildRequires:  libxkbcommon-devel >= 0.1.0-8
 BuildRequires:  mesa-libEGL-devel >= 8.1
 BuildRequires:  mesa-libgbm-devel
 BuildRequires:  mesa-libGLES-devel
@@ -43,11 +47,13 @@ Weston is the reference wayland compositor that can run on KMS, under X11
 or under another compositor.
 
 %prep
-%setup -q -n weston-%{gitdate}
+%setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
 
 %build
+%if 0%{?gitdate}
 autoreconf -ivf
-%configure --disable-static --disable-setuid-install
+%endif
+%configure --disable-static --disable-setuid-install --enable-xwayland
 make %{?_smp_mflags}
 
 %install
@@ -62,19 +68,25 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_bindir}/weston
 %{_bindir}/weston-launch
 %{_bindir}/weston-terminal
+%{_bindir}/wcap-decode
 %dir %{_libdir}/weston
 %{_libdir}/weston/desktop-shell.so
 %{_libdir}/weston/drm-backend.so
 %{_libdir}/weston/tablet-shell.so
 %{_libdir}/weston/wayland-backend.so
 %{_libdir}/weston/x11-backend.so
-%{_libdir}/weston/xserver-launcher.so
+%{_libdir}/weston/xwayland.so
 %{_libexecdir}/weston-*
 %dir %{_datadir}/weston
 %{_datadir}/weston/*.png
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Mon Sep 17 2012 Thorsten Leemhuis <fedora@leemhuis.info> 0.95.0-1
+- Update to 0.95.0
+- enable xwayland
+- make it easier to switch between a release and a git snapshot in spec file
+
 * Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.89-0.5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
