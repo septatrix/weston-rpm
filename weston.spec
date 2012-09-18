@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        0.95.0
-Release:        2%{?alphatag}%{?dist}
+Release:        3%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -29,6 +29,7 @@ BuildRequires:  libwayland-client-devel
 BuildRequires:  libwayland-server-devel
 BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libxcb-devel
+BuildRequires:  libXcursor-devel
 BuildRequires:  libxkbcommon-devel >= 0.1.0-8
 BuildRequires:  mesa-libEGL-devel >= 8.1
 BuildRequires:  mesa-libgbm-devel
@@ -82,6 +83,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Tue Sep 17 2012 Thorsten Leemhuis <fedora@leemhuis.info> 0.95.0-3
+- add libXcursor-devel as BR
+
 * Mon Sep 17 2012 Thorsten Leemhuis <fedora@leemhuis.info> 0.95.0-2
 - rebuild
 
