@@ -1,7 +1,7 @@
 #define gitdate 20120424
 
 Name:           weston
-Version:        0.99.0
+Version:        1.0.0
 Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -67,6 +67,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %doc README
 %doc data/COPYING
 %{_bindir}/weston
+%{_bindir}/weston-info
 %{_bindir}/weston-launch
 %{_bindir}/weston-terminal
 %{_bindir}/wcap-decode
@@ -78,11 +79,15 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/weston/x11-backend.so
 %{_libdir}/weston/xwayland.so
 %{_libexecdir}/weston-*
+%{_mandir}/man1/*.1*
 %dir %{_datadir}/weston
 %{_datadir}/weston/*.png
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Tue Oct 23 2012 Adam Jackson <ajax@redhat.com> 1.0.0-1
+- weston 1.0.0
+
 * Thu Oct 18 2012 Adam Jackson <ajax@redhat.com> 0.99.0-1
 - weston 0.99.0
 
