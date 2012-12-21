@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        1.0.0
-Release:        1%{?alphatag}%{?dist}
+Release:        2%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -85,6 +85,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Fri Dec 21 2012 Adam Tkac <atkac redhat com> - 1.0.0-2
+- rebuild against new libjpeg
+
 * Tue Oct 23 2012 Adam Jackson <ajax@redhat.com> 1.0.0-1
 - weston 1.0.0
 
