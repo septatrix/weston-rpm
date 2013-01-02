@@ -1,8 +1,8 @@
 #define gitdate 20120424
 
 Name:           weston
-Version:        1.0.0
-Release:        2%{?alphatag}%{?dist}
+Version:        1.0.3
+Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -80,11 +80,15 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/weston/xwayland.so
 %{_libexecdir}/weston-*
 %{_mandir}/man1/*.1*
+%{_mandir}/man7/*.7*
 %dir %{_datadir}/weston
 %{_datadir}/weston/*.png
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Wed Jan 02 2013 Adam Jackson <ajax@redhat.com> 1.0.3-1
+- weston 1.0.3
+
 * Fri Dec 21 2012 Adam Tkac <atkac redhat com> - 1.0.0-2
 - rebuild against new libjpeg
 
