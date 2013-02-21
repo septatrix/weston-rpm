@@ -1,8 +1,8 @@
 #define gitdate 20120424
 
 Name:           weston
-Version:        1.0.3
-Release:        3%{?alphatag}%{?dist}
+Version:        1.0.5
+Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -13,6 +13,9 @@ Source0:        %{name}-%{gitdate}.tar.bz2
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 %endif
 Source1:        make-git-snapshot.sh
+
+# git diff-tree -p 1.0.5..origin/1.0 > weston-$(git describe origin/1.0).patch
+Patch0:		weston-1.0.5-11-g9a576c3.patch
 
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
@@ -25,6 +28,7 @@ BuildRequires:  libtool
 %if 0%{?fedora} < 18
 BuildRequires:  libudev-devel
 %endif
+BuildRequires:	libunwind-devel
 BuildRequires:  libwayland-client-devel
 BuildRequires:  libwayland-server-devel
 BuildRequires:  libwayland-cursor-devel
@@ -49,9 +53,11 @@ or under another compositor.
 
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
+%patch0 -p1 -b .git
 
 %build
-%if 0%{?gitdate}
+# temporary force to pick up configure.ac changes
+%if 1 || 0%{?gitdate}
 autoreconf -ivf
 %endif
 %configure --disable-static --disable-setuid-install --enable-xwayland
@@ -80,12 +86,16 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/weston/xwayland.so
 %{_libexecdir}/weston-*
 %{_mandir}/man1/*.1*
+%{_mandir}/man5/*.5*
 %{_mandir}/man7/*.7*
 %dir %{_datadir}/weston
 %{_datadir}/weston/*.png
 %{_datadir}/weston/wayland.svg
 
 %changelog
+* Thu Feb 21 2013 Adam Jackson <ajax@redhat.com> 1.0.5-1
+- weston 1.0.5+ (actually tip of 1.0 branch)
+
 * Fri Feb 15 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.3-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 

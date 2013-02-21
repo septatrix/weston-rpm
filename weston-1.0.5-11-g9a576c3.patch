@@ -1,0 +1,693 @@
+diff --git a/configure.ac b/configure.ac
+index 8a9c291..7bc5c83 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -240,6 +240,13 @@ fi
+ AC_SUBST(GCC_CFLAGS)
+ AC_SUBST(GCC_CXXFLAGS)
+ 
++PKG_CHECK_MODULES(LIBUNWIND, libunwind,
++                  [have_libunwind=yes], [have_libunwind=no])
++if test "x$have_libunwind" = xyes; then
++       AC_DEFINE(HAVE_LIBUNWIND, 1, [Have libunwind support])
++fi
++AM_CONDITIONAL(HAVE_LIBUNWIND, [test "x$have_libunwind" = xyes])
++
+ WAYLAND_SCANNER_RULES(['$(top_srcdir)/protocol'])
+ 
+ AC_CONFIG_FILES([Makefile
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 4be2e11..447b911 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -7,8 +7,9 @@ AM_CPPFLAGS =					\
+ 	-DLIBEXECDIR='"$(libexecdir)"'
+ 
+ weston_LDFLAGS = -export-dynamic
+-weston_CFLAGS = $(GCC_CFLAGS) $(COMPOSITOR_CFLAGS)
+-weston_LDADD = $(COMPOSITOR_LIBS) $(DLOPEN_LIBS) -lm ../shared/libshared.la
++weston_CFLAGS = $(GCC_CFLAGS) $(COMPOSITOR_CFLAGS) $(LIBUNWIND_CFLAGS)
++weston_LDADD = $(COMPOSITOR_LIBS) $(LIBUNWIND_LIBS) \
++	$(DLOPEN_LIBS) -lm ../shared/libshared.la
+ 
+ weston_SOURCES =				\
+ 	git-version.h				\
+diff --git a/src/compositor-drm.c b/src/compositor-drm.c
+index 48b2685..84c51ff 100644
+--- a/src/compositor-drm.c
++++ b/src/compositor-drm.c
+@@ -1797,7 +1797,7 @@ drm_restore(struct weston_compositor *ec)
+ 
+ static const char default_seat[] = "seat0";
+ 
+-static void
++static int
+ device_added(struct udev_device *udev_device, struct drm_seat *master)
+ {
+ 	struct weston_compositor *c;
+@@ -1811,7 +1811,7 @@ device_added(struct udev_device *udev_device, struct drm_seat *master)
+ 		device_seat = default_seat;
+ 
+ 	if (strcmp(device_seat, master->seat_id))
+-		return;
++		return 0;
+ 
+ 	c = master->base.compositor;
+ 	devnode = udev_device_get_devnode(udev_device);
+@@ -1822,20 +1822,26 @@ device_added(struct udev_device *udev_device, struct drm_seat *master)
+ 	fd = weston_launcher_open(c, devnode, O_RDWR | O_NONBLOCK);
+ 	if (fd < 0) {
+ 		weston_log("opening input device '%s' failed.\n", devnode);
+-		return;
++		return -1;
+ 	}
+ 
+ 	device = evdev_device_create(&master->base, devnode, fd);
+-	if (!device) {
++	if (device == EVDEV_UNHANDLED_DEVICE) {
+ 		close(fd);
+ 		weston_log("not using input device '%s'.\n", devnode);
+-		return;
++		return 0;
++	} else if (device == NULL) {
++		close(fd);
++		weston_log("failed to create input device '%s'.\n", devnode);
++		return -1;
+ 	}
+ 
+ 	wl_list_insert(master->devices_list.prev, &device->link);
++
++	return 0;
+ }
+ 
+-static void
++static int
+ evdev_add_devices(struct udev *udev, struct weston_seat *seat_base)
+ {
+ 	struct drm_seat *seat = (struct drm_seat *) seat_base;
+@@ -1857,7 +1863,11 @@ evdev_add_devices(struct udev *udev, struct weston_seat *seat_base)
+ 			continue;
+ 		}
+ 
+-		device_added(device, seat);
++		if (device_added(device, seat) < 0) {
++			udev_device_unref(device);
++			udev_enumerate_unref(e);
++			return -1;
++		}
+ 
+ 		udev_device_unref(device);
+ 	}
+@@ -1874,6 +1884,8 @@ evdev_add_devices(struct udev *udev, struct weston_seat *seat_base)
+ 			"(Weston backend option 'seat', "
+ 			"udev device property ID_SEAT)\n");
+ 	}
++
++	return 0;
+ }
+ 
+ static int
+@@ -1976,7 +1988,7 @@ drm_led_update(struct weston_seat *seat_base, enum weston_led leds)
+ 		evdev_led_update(device, leds);
+ }
+ 
+-static void
++static struct drm_seat *
+ evdev_input_create(struct weston_compositor *c, struct udev *udev,
+ 		   const char *seat_id)
+ {
+@@ -1984,7 +1996,7 @@ evdev_input_create(struct weston_compositor *c, struct udev *udev,
+ 
+ 	seat = malloc(sizeof *seat);
+ 	if (seat == NULL)
+-		return;
++		return NULL;
+ 
+ 	memset(seat, 0, sizeof *seat);
+ 	weston_seat_init(&seat->base, c);
+@@ -1992,13 +2004,17 @@ evdev_input_create(struct weston_compositor *c, struct udev *udev,
+ 
+ 	wl_list_init(&seat->devices_list);
+ 	seat->seat_id = strdup(seat_id);
+-	if (!evdev_enable_udev_monitor(udev, &seat->base)) {
+-		free(seat->seat_id);
+-		free(seat);
+-		return;
+-	}
++	if (!evdev_enable_udev_monitor(udev, &seat->base))
++		goto err;
++	if (evdev_add_devices(udev, &seat->base) < 0)
++		goto err;
++
++	return seat;
+ 
+-	evdev_add_devices(udev, &seat->base);
++ err:
++	free(seat->seat_id);
++	free(seat);
++	return NULL;
+ }
+ 
+ static void
+@@ -2307,7 +2323,10 @@ drm_compositor_create(struct wl_display *display,
+ 
+ 	path = NULL;
+ 
+-	evdev_input_create(&ec->base, ec->udev, seat);
++	if (evdev_input_create(&ec->base, ec->udev, seat) == NULL) {
++		weston_log("failed to create input devices\n");
++		goto err_sprite;
++	}
+ 
+ 	loop = wl_display_get_event_loop(ec->base.wl_display);
+ 	ec->drm_source =
+@@ -2357,6 +2376,8 @@ err_sprite:
+ err_udev_dev:
+ 	udev_device_unref(drm_device);
+ err_tty:
++	if (weston_launcher_drm_set_master(&ec->base, ec->drm.fd, 0) < 0)
++		weston_log("failed to drop master: %m\n");
+ 	tty_destroy(ec->tty);
+ err_udev:
+ 	udev_unref(ec->udev);
+diff --git a/src/compositor-x11.c b/src/compositor-x11.c
+index d1b6ec7..9bd7a43 100644
+--- a/src/compositor-x11.c
++++ b/src/compositor-x11.c
+@@ -293,7 +293,8 @@ x11_input_create(struct x11_compositor *c, int no_input)
+ 	weston_seat_init_pointer(&c->core_seat);
+ 
+ 	keymap = x11_compositor_get_keymap(c);
+-	weston_seat_init_keyboard(&c->core_seat, keymap);
++	if (weston_seat_init_keyboard(&c->core_seat, keymap) < 0)
++		return -1;
+ 	if (keymap)
+ 		xkb_map_unref(keymap);
+ 
+diff --git a/src/compositor.c b/src/compositor.c
+index bb129d6..6d7b2c7 100644
+--- a/src/compositor.c
++++ b/src/compositor.c
+@@ -49,6 +49,11 @@
+ #include <sys/time.h>
+ #include <time.h>
+ 
++#ifdef HAVE_LIBUNWIND
++#define UNW_LOCAL_ONLY
++#include <libunwind.h>
++#endif
++
+ #include <wayland-server.h>
+ #include "compositor.h"
+ #include "../shared/os-compatibility.h"
+@@ -2145,6 +2150,7 @@ seat_get_keyboard(struct wl_client *client, struct wl_resource *resource,
+ 	    seat->seat.keyboard->focus->resource.client == client) {
+ 		wl_keyboard_set_focus(seat->seat.keyboard,
+ 				      seat->seat.keyboard->focus);
++		wl_data_device_set_keyboard_focus(&seat->seat);
+ 	}
+ }
+ 
+@@ -2202,14 +2208,15 @@ device_handle_new_drag_icon(struct wl_listener *listener, void *data)
+ 	weston_seat_update_drag_surface(seat, 0, 0);
+ }
+ 
+-static void weston_compositor_xkb_init(struct weston_compositor *ec,
+-				       struct xkb_rule_names *names)
++static int
++weston_compositor_xkb_init(struct weston_compositor *ec,
++			   struct xkb_rule_names *names)
+ {
+ 	if (ec->xkb_context == NULL) {
+ 		ec->xkb_context = xkb_context_new(0);
+ 		if (ec->xkb_context == NULL) {
+ 			weston_log("failed to create XKB context\n");
+-			exit(1);
++			return -1;
+ 		}
+ 	}
+ 
+@@ -2221,6 +2228,8 @@ static void weston_compositor_xkb_init(struct weston_compositor *ec,
+ 		ec->xkb_names.model = strdup("pc105");
+ 	if (!ec->xkb_names.layout)
+ 		ec->xkb_names.layout = strdup("us");
++
++	return 0;
+ }
+ 
+ static void xkb_info_destroy(struct weston_xkb_info *xkb_info)
+@@ -2246,7 +2255,7 @@ static void weston_compositor_xkb_destroy(struct weston_compositor *ec)
+ 	xkb_context_unref(ec->xkb_context);
+ }
+ 
+-static void
++static int
+ weston_xkb_info_new_keymap(struct weston_xkb_info *xkb_info)
+ {
+ 	char *keymap_str;
+@@ -2275,7 +2284,7 @@ weston_xkb_info_new_keymap(struct weston_xkb_info *xkb_info)
+ 	keymap_str = xkb_map_get_as_string(xkb_info->keymap);
+ 	if (keymap_str == NULL) {
+ 		weston_log("failed to get string version of keymap\n");
+-		exit(EXIT_FAILURE);
++		return -1;
+ 	}
+ 	xkb_info->keymap_size = strlen(keymap_str) + 1;
+ 
+@@ -2297,21 +2306,21 @@ weston_xkb_info_new_keymap(struct weston_xkb_info *xkb_info)
+ 	strcpy(xkb_info->keymap_area, keymap_str);
+ 	free(keymap_str);
+ 
+-	return;
++	return 0;
+ 
+ err_dev_zero:
+ 	close(xkb_info->keymap_fd);
+ 	xkb_info->keymap_fd = -1;
+ err_keymap_str:
+ 	free(keymap_str);
+-	exit(EXIT_FAILURE);
++	return -1;
+ }
+ 
+-static void
++static int
+ weston_compositor_build_global_keymap(struct weston_compositor *ec)
+ {
+ 	if (ec->xkb_info.keymap != NULL)
+-		return;
++		return 0;
+ 
+ 	ec->xkb_info.keymap = xkb_map_new_from_names(ec->xkb_context,
+ 						     &ec->xkb_names,
+@@ -2319,28 +2328,32 @@ weston_compositor_build_global_keymap(struct weston_compositor *ec)
+ 	if (ec->xkb_info.keymap == NULL) {
+ 		weston_log("failed to compile global XKB keymap\n");
+ 		weston_log("  tried rules %s, model %s, layout %s, variant %s, "
+-			"options %s",
++			"options %s\n",
+ 			ec->xkb_names.rules, ec->xkb_names.model,
+ 			ec->xkb_names.layout, ec->xkb_names.variant,
+ 			ec->xkb_names.options);
+-		exit(1);
++		return -1;
+ 	}
+ 
+-	weston_xkb_info_new_keymap(&ec->xkb_info);
++	if (weston_xkb_info_new_keymap(&ec->xkb_info) < 0)
++		return -1;
++
++	return 0;
+ }
+ 
+-WL_EXPORT void
++WL_EXPORT int
+ weston_seat_init_keyboard(struct weston_seat *seat, struct xkb_keymap *keymap)
+ {
+ 	if (seat->has_keyboard)
+-		return;
++		return 0;
+ 
+ 	if (keymap != NULL) {
+ 		seat->xkb_info.keymap = xkb_map_ref(keymap);
+-		weston_xkb_info_new_keymap(&seat->xkb_info);
+-	}
+-	else {
+-		weston_compositor_build_global_keymap(seat->compositor);
++		if (weston_xkb_info_new_keymap(&seat->xkb_info) < 0)
++			return -1;
++	} else {
++		if (weston_compositor_build_global_keymap(seat->compositor) < 0)
++			return -1;
+ 		seat->xkb_info = seat->compositor->xkb_info;
+ 		seat->xkb_info.keymap = xkb_map_ref(seat->xkb_info.keymap);
+ 	}
+@@ -2348,7 +2361,7 @@ weston_seat_init_keyboard(struct weston_seat *seat, struct xkb_keymap *keymap)
+ 	seat->xkb_state.state = xkb_state_new(seat->xkb_info.keymap);
+ 	if (seat->xkb_state.state == NULL) {
+ 		weston_log("failed to initialise XKB state\n");
+-		exit(1);
++		return -1;
+ 	}
+ 
+ 	seat->xkb_state.leds = 0;
+@@ -2357,6 +2370,8 @@ weston_seat_init_keyboard(struct weston_seat *seat, struct xkb_keymap *keymap)
+ 	wl_seat_set_keyboard(&seat->seat, &seat->keyboard);
+ 
+ 	seat->has_keyboard = 1;
++
++	return 0;
+ }
+ 
+ WL_EXPORT void
+@@ -2837,7 +2852,8 @@ weston_compositor_init(struct weston_compositor *ec,
+ 
+ 	weston_plane_init(&ec->primary_plane, 0, 0);
+ 
+-	weston_compositor_xkb_init(ec, &xkb_names);
++	if (weston_compositor_xkb_init(ec, &xkb_names) < 0)
++		return -1;
+ 
+ 	ec->ping_handler = NULL;
+ 
+@@ -2902,13 +2918,88 @@ static int on_term_signal(int signal_number, void *data)
+ 	return 1;
+ }
+ 
++#ifdef HAVE_LIBUNWIND
++
+ static void
+-on_segv_signal(int s, siginfo_t *siginfo, void *context)
++print_backtrace(void)
++{
++	unw_cursor_t cursor;
++	unw_context_t context;
++	unw_word_t off;
++	unw_proc_info_t pip;
++	int ret, i = 0;
++	char procname[256];
++	const char *filename;
++	Dl_info dlinfo;
++
++	pip.unwind_info = NULL;
++	ret = unw_getcontext(&context);
++	if (ret) {
++		weston_log("unw_getcontext: %d\n", ret);
++		return;
++	}
++
++	ret = unw_init_local(&cursor, &context);
++	if (ret) {
++		weston_log("unw_init_local: %d\n", ret);
++		return;
++	}
++
++	ret = unw_step(&cursor);
++	while (ret > 0) {
++		ret = unw_get_proc_info(&cursor, &pip);
++		if (ret) {
++			weston_log("unw_get_proc_info: %d\n", ret);
++			break;
++		}
++
++		ret = unw_get_proc_name(&cursor, procname, 256, &off);
++		if (ret && ret != -UNW_ENOMEM) {
++			if (ret != -UNW_EUNSPEC)
++				weston_log("unw_get_proc_name: %d\n", ret);
++			procname[0] = '?';
++			procname[1] = 0;
++		}
++
++		if (dladdr((void *)(pip.start_ip + off), &dlinfo) && dlinfo.dli_fname &&
++		    *dlinfo.dli_fname)
++			filename = dlinfo.dli_fname;
++		else
++			filename = "?";
++
++		weston_log("%u: %s (%s%s+0x%x) [%p]\n", i++, filename, procname,
++			   ret == -UNW_ENOMEM ? "..." : "", (int)off, (void *)(pip.start_ip + off));
++
++		ret = unw_step(&cursor);
++		if (ret < 0)
++			weston_log("unw_step: %d\n", ret);
++	}
++}
++
++#else
++
++static void
++print_backtrace(void)
+ {
+ 	void *buffer[32];
+ 	int i, count;
+ 	Dl_info info;
+ 
++	count = backtrace(buffer, ARRAY_LENGTH(buffer));
++	for (i = 0; i < count; i++) {
++		dladdr(buffer[i], &info);
++		weston_log("  [%016lx]  %s  (%s)\n",
++			(long) buffer[i],
++			info.dli_sname ? info.dli_sname : "--",
++			info.dli_fname);
++	}
++}
++
++#endif
++
++static void
++on_segv_signal(int s, siginfo_t *siginfo, void *context)
++{
+ 	/* This SIGSEGV handler will do a best-effort backtrace, and
+ 	 * then call the backend restore function, which will switch
+ 	 * back to the vt we launched from or ungrab X etc and then
+@@ -2919,14 +3010,7 @@ on_segv_signal(int s, siginfo_t *siginfo, void *context)
+ 
+ 	weston_log("caught segv\n");
+ 
+-	count = backtrace(buffer, ARRAY_LENGTH(buffer));
+-	for (i = 0; i < count; i++) {
+-		dladdr(buffer[i], &info);
+-		weston_log("  [%016lx]  %s  (%s)\n",
+-			(long) buffer[i],
+-			info.dli_sname ? info.dli_sname : "--",
+-			info.dli_fname);
+-	}
++	print_backtrace();
+ 
+ 	segv_compositor->restore(segv_compositor);
+ 
+diff --git a/src/compositor.h b/src/compositor.h
+index 121f6bf..c7c583e 100644
+--- a/src/compositor.h
++++ b/src/compositor.h
+@@ -722,7 +722,7 @@ void
+ weston_seat_init(struct weston_seat *seat, struct weston_compositor *ec);
+ void
+ weston_seat_init_pointer(struct weston_seat *seat);
+-void
++int
+ weston_seat_init_keyboard(struct weston_seat *seat, struct xkb_keymap *keymap);
+ void
+ weston_seat_init_touch(struct weston_seat *seat);
+diff --git a/src/evdev.c b/src/evdev.c
+index 1c65b7b..321992e 100644
+--- a/src/evdev.c
++++ b/src/evdev.c
+@@ -381,7 +381,7 @@ evdev_device_data(int fd, uint32_t mask, void *data)
+ }
+ 
+ static int
+-evdev_configure_device(struct evdev_device *device)
++evdev_handle_device(struct evdev_device *device)
+ {
+ 	struct input_absinfo absinfo;
+ 	unsigned long ev_bits[NBITS(EV_MAX)];
+@@ -467,9 +467,15 @@ evdev_configure_device(struct evdev_device *device)
+ 		weston_log("input device %s, %s "
+ 			   "ignored: unsupported device type\n",
+ 			   device->devname, device->devnode);
+-		return -1;
++		return 0;
+ 	}
+ 
++	return 1;
++}
++
++static int
++evdev_configure_device(struct evdev_device *device)
++{
+ 	if ((device->caps &
+ 	     (EVDEV_MOTION_ABS | EVDEV_MOTION_REL | EVDEV_BUTTON))) {
+ 		weston_seat_init_pointer(device->seat);
+@@ -477,7 +483,8 @@ evdev_configure_device(struct evdev_device *device)
+ 			   device->devname, device->devnode);
+ 	}
+ 	if ((device->caps & EVDEV_KEYBOARD)) {
+-		weston_seat_init_keyboard(device->seat, NULL);
++		if (weston_seat_init_keyboard(device->seat, NULL) < 0)
++			return -1;
+ 		weston_log("input device %s, %s is a keyboard\n",
+ 			   device->devname, device->devnode);
+ 	}
+@@ -519,6 +526,13 @@ evdev_device_create(struct weston_seat *seat, const char *path, int device_fd)
+ 	ioctl(device->fd, EVIOCGNAME(sizeof(devname)), devname);
+ 	device->devname = strdup(devname);
+ 
++	if (!evdev_handle_device(device)) {
++		free(device->devnode);
++		free(device->devname);
++		free(device);
++		return EVDEV_UNHANDLED_DEVICE;
++	}
++
+ 	if (evdev_configure_device(device) == -1)
+ 		goto err1;
+ 
+diff --git a/src/evdev.h b/src/evdev.h
+index 85c4739..7222de3 100644
+--- a/src/evdev.h
++++ b/src/evdev.h
+@@ -85,6 +85,8 @@ struct evdev_device {
+ #define TEST_BIT(array, bit)    ((array[LONG(bit)] >> OFF(bit)) & 1)
+ /* end copied */
+ 
++#define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)
++
+ struct evdev_dispatch;
+ 
+ struct evdev_dispatch_interface {
+diff --git a/src/shell.c b/src/shell.c
+index 831b125..d9b977e 100644
+--- a/src/shell.c
++++ b/src/shell.c
+@@ -238,6 +238,9 @@ get_shell_surface(struct weston_surface *surface);
+ static struct desktop_shell *
+ shell_surface_get_shell(struct shell_surface *shsurf);
+ 
++static void
++surface_rotate(struct shell_surface *surface, struct wl_seat *seat);
++
+ static bool
+ shell_surface_is_top_fullscreen(struct shell_surface *shsurf)
+ {
+@@ -1234,6 +1237,9 @@ busy_cursor_grab_button(struct wl_pointer_grab *base,
+ 	if (shsurf && button == BTN_LEFT && state) {
+ 		activate(shsurf->shell, shsurf->surface, seat);
+ 		surface_move(shsurf, seat);
++	} else if (shsurf && button == BTN_RIGHT && state) {
++		activate(shsurf->shell, shsurf->surface, seat);
++		surface_rotate(shsurf, &seat->seat);
+ 	}
+ }
+ 
+@@ -1873,6 +1879,14 @@ shell_map_popup(struct shell_surface *shsurf)
+ 	struct weston_surface *es = shsurf->surface;
+ 	struct weston_surface *parent = shsurf->parent;
+ 
++	/* Remove the old transform. We don't want to add it twice
++	 * otherwise Weston will go into an infinite loop when going
++	 * through the transforms. */
++	if (!wl_list_empty(&shsurf->popup.parent_transform.link)) {
++		wl_list_remove(&shsurf->popup.parent_transform.link);
++		wl_list_init(&shsurf->popup.parent_transform.link);
++	}
++
+ 	es->output = parent->output;
+ 	shsurf->popup.grab.interface = &popup_grab_interface;
+ 
+@@ -2041,6 +2055,7 @@ create_shell_surface(void *shell, struct weston_surface *surface,
+ 	weston_matrix_init(&shsurf->rotation.rotation);
+ 
+ 	wl_list_init(&shsurf->workspace_transform.link);
++	wl_list_init(&shsurf->popup.parent_transform.link);
+ 
+ 	shsurf->type = SHELL_SURFACE_NONE;
+ 	shsurf->next_type = SHELL_SURFACE_NONE;
+@@ -2092,7 +2107,16 @@ static const struct wl_shell_interface shell_implementation = {
+ static void
+ handle_screensaver_sigchld(struct weston_process *proc, int status)
+ {
++	struct desktop_shell *shell =
++		container_of(proc, struct desktop_shell, screensaver.process);
++	struct weston_output *output;
++
+ 	proc->pid = 0;
++
++	if (shell->locked)
++		wl_list_for_each(output, &shell->compositor->output_list, link)
++			if (output->set_dpms)
++				output->set_dpms(output, WESTON_DPMS_STANDBY);
+ }
+ 
+ static void
+@@ -2577,23 +2601,12 @@ static const struct wl_pointer_grab_interface rotate_grab_interface = {
+ };
+ 
+ static void
+-rotate_binding(struct wl_seat *seat, uint32_t time, uint32_t button,
+-	       void *data)
++surface_rotate(struct shell_surface *surface, struct wl_seat *seat)
+ {
+-	struct weston_surface *base_surface =
+-		(struct weston_surface *) seat->pointer->focus;
+-	struct shell_surface *surface;
+ 	struct rotate_grab *rotate;
+ 	float dx, dy;
+ 	float r;
+ 
+-	if (base_surface == NULL)
+-		return;
+-
+-	surface = get_shell_surface(base_surface);
+-	if (!surface || surface->type == SHELL_SURFACE_FULLSCREEN)
+-		return;
+-
+ 	rotate = malloc(sizeof *rotate);
+ 	if (!rotate)
+ 		return;
+@@ -2631,6 +2644,24 @@ rotate_binding(struct wl_seat *seat, uint32_t time, uint32_t button,
+ }
+ 
+ static void
++rotate_binding(struct wl_seat *seat, uint32_t time, uint32_t button,
++	       void *data)
++{
++	struct weston_surface *base_surface =
++		(struct weston_surface *) seat->pointer->focus;
++	struct shell_surface *surface;
++
++	if (base_surface == NULL)
++		return;
++
++	surface = get_shell_surface(base_surface);
++	if (!surface || surface->type == SHELL_SURFACE_FULLSCREEN)
++		return;
++
++	surface_rotate(surface, seat);
++}
++
++static void
+ lower_fullscreen_layer(struct desktop_shell *shell)
+ {
+ 	struct workspace *ws;
+@@ -2785,6 +2816,9 @@ show_input_panels(struct wl_listener *listener, void *data)
+ 	struct input_panel_surface *surface, *next;
+ 	struct weston_surface *ws;
+ 
++	if (shell->showing_input_panels)
++		return;
++
+ 	shell->showing_input_panels = true;
+ 
+ 	if (!shell->locked)
+diff --git a/src/xwayland/window-manager.c b/src/xwayland/window-manager.c
+index 1b2c0da..67e8236 100644
+--- a/src/xwayland/window-manager.c
++++ b/src/xwayland/window-manager.c
+@@ -746,20 +746,17 @@ weston_wm_window_draw_decoration(void *data)
+ 
+ 	if (window->surface) {
+ 		pixman_region32_fini(&window->surface->pending.opaque);
+-		pixman_region32_init_rect(&window->surface->pending.opaque, 0, 0,
+-					  width, height);
+-
+ 		/* We leave an extra pixel around the X window area to
+ 		 * make sure we don't sample from the undefined alpha
+ 		 * channel when filtering. */
+-		pixman_region32_intersect_rect(&window->surface->pending.opaque,
+-					       &window->surface->pending.opaque,
+-					       x - 1, y - 1,
+-					       window->width + 2,
+-					       window->height + 2);
++		pixman_region32_init_rect(&window->surface->pending.opaque, 
++					  x - 1, y - 1,
++					  window->width + 2,
++					  window->height + 2);
+ 		window->surface->geometry.dirty = 1;
+ 
+-		pixman_region32_init_rect(&window->surface->input,
++		pixman_region32_fini(&window->surface->pending.input);
++		pixman_region32_init_rect(&window->surface->pending.input,
+ 					  t->margin, t->margin,
+ 					  width - 2 * t->margin,
+ 					  height - 2 * t->margin);
