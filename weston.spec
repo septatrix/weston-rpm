@@ -1,7 +1,7 @@
 #define gitdate 20120424
 
 Name:           weston
-Version:        1.0.5
+Version:        1.0.6
 Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -14,8 +14,8 @@ Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.x
 %endif
 Source1:        make-git-snapshot.sh
 
-# git diff-tree -p 1.0.5..origin/1.0 > weston-$(git describe origin/1.0).patch
-Patch0:		weston-1.0.5-11-g9a576c3.patch
+# git diff-tree -p 1.0.6..origin/1.0 > weston-$(git describe origin/1.0).patch
+#Patch0:		weston-1.0.5-11-g9a576c3.patch
 
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
@@ -51,9 +51,15 @@ BuildRequires:  systemd-devel
 Weston is the reference wayland compositor that can run on KMS, under X11
 or under another compositor.
 
+%package devel
+Summary: Common headers for weston
+License: MIT
+%description devel
+Common headers for weston
+
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
-%patch0 -p1 -b .git
+#%patch0 -p1 -b .git
 
 %build
 # temporary force to pick up configure.ac changes
@@ -92,7 +98,18 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/weston/*.png
 %{_datadir}/weston/wayland.svg
 
+%files devel
+%defattr(-,root,root,-)
+%{_includedir}/weston/compositor.h
+%{_includedir}/weston/config-parser.h
+%{_includedir}/weston/matrix.h
+%{_includedir}/weston/version.h
+%{_libdir}/pkgconfig/weston.pc
+
 %changelog
+* Wed Mar 27 2013 Richard Hughes <richard@hughsie.com> 1.0.6-1
+- weston 1.0.6
+
 * Thu Feb 21 2013 Adam Jackson <ajax@redhat.com> 1.0.5-1
 - weston 1.0.5+ (actually tip of 1.0 branch)
 
@@ -114,7 +131,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 * Thu Oct 18 2012 Adam Jackson <ajax@redhat.com> 0.99.0-1
 - weston 0.99.0
 
-* Tue Sep 17 2012 Thorsten Leemhuis <fedora@leemhuis.info> 0.95.0-3
+* Mon Sep 17 2012 Thorsten Leemhuis <fedora@leemhuis.info> 0.95.0-3
 - add libXcursor-devel as BR
 
 * Mon Sep 17 2012 Thorsten Leemhuis <fedora@leemhuis.info> 0.95.0-2
