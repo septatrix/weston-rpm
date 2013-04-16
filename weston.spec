@@ -1,7 +1,7 @@
 #define gitdate 20120424
 
 Name:           weston
-Version:        1.0.6
+Version:        1.1.0
 Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -30,7 +30,7 @@ BuildRequires:  libudev-devel
 %endif
 BuildRequires:	libunwind-devel
 BuildRequires:  libwayland-client-devel
-BuildRequires:  libwayland-server-devel
+BuildRequires:  libwayland-server-devel >= 1.1.0
 BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  libXcursor-devel
@@ -86,6 +86,8 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %dir %{_libdir}/weston
 %{_libdir}/weston/desktop-shell.so
 %{_libdir}/weston/drm-backend.so
+%{_libdir}/weston/fbdev-backend.so
+%{_libdir}/weston/headless-backend.so
 %{_libdir}/weston/tablet-shell.so
 %{_libdir}/weston/wayland-backend.so
 %{_libdir}/weston/x11-backend.so
@@ -107,6 +109,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Tue Apr 16 2013 Richard Hughes <richard@hughsie.com> 1.1.0-1
+- weston 1.1.0
+
 * Wed Mar 27 2013 Richard Hughes <richard@hughsie.com> 1.0.6-1
 - weston 1.0.6
 
