@@ -14,7 +14,7 @@ echo HEAD ${1:-HEAD}
 rm -rf $DIRNAME
 
 git clone ${REF:+--reference $REF} \
-	git://anongit.freedesktop.org/wayland/wayland-demos $DIRNAME
+	git://anongit.freedesktop.org/wayland/weston $DIRNAME
 
 GIT_DIR=$DIRNAME/.git git archive --format=tar --prefix=$DIRNAME/ ${1:-HEAD} \
 	| bzip2 > $DIRNAME.tar.bz2
