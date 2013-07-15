@@ -1,8 +1,8 @@
-%define gitdate 20130515
+#define gitdate 20130515
 
 Name:           weston
-Version:        1.1.90
-Release:        0.1%{?alphatag}%{?dist}
+Version:        1.2.0
+Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -17,9 +17,6 @@ Source1:        make-git-snapshot.sh
 # git diff-tree -p 1.0.6..origin/1.0 > weston-$(git describe origin/1.0).patch
 #Patch0:		weston-1.0.5-11-g9a576c3.patch
 
-# Sent upstream
-Patch1:		weston-fixes.patch
-
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
 BuildRequires:  glib2-devel
@@ -33,7 +30,7 @@ BuildRequires:  libudev-devel
 %endif
 BuildRequires:	libunwind-devel
 BuildRequires:  libwayland-client-devel
-BuildRequires:  libwayland-server-devel >= 1.1.90
+BuildRequires:  libwayland-server-devel >= 1.2.0
 BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  libXcursor-devel
@@ -65,7 +62,6 @@ Common headers for weston
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
 #%patch0 -p1 -b .git
-%patch1 -p1 -b .fixes
 
 %build
 # temporary force to pick up configure.ac changes
