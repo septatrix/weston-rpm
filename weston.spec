@@ -5,8 +5,8 @@
 %endif
 
 Name:           weston
-Version:        1.2.0
-Release:        3%{?alphatag}%{?dist}
+Version:        1.3.1
+Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -34,7 +34,7 @@ BuildRequires:  libudev-devel
 %endif
 BuildRequires:	libunwind-devel
 BuildRequires:  libwayland-client-devel
-BuildRequires:  libwayland-server-devel >= 1.2.0
+BuildRequires:  libwayland-server-devel >= 1.3.0
 BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  libXcursor-devel
@@ -117,13 +117,18 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 
 %files devel
 %defattr(-,root,root,-)
+%dir %{_includedir}/weston
 %{_includedir}/weston/compositor.h
 %{_includedir}/weston/config-parser.h
 %{_includedir}/weston/matrix.h
 %{_includedir}/weston/version.h
+%{_includedir}/weston/zalloc.h
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Mon Nov 25 2013 Lubomir Rintel <lkundrak@v3.sk> - 1.3.1-1
+- Weston 1.3.1
+
 * Thu Oct 03 2013 Adam Jackson <ajax@redhat.com> 1.2.0-3
 - Build RDP backend if we have new enough freerdp (#991220)
 
