@@ -103,7 +103,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %if 0%{?with_rdp}
 %{_libdir}/weston/rdp-backend.so
 %endif
-%{_libdir}/weston/tablet-shell.so
+%{_libdir}/weston/gl-renderer.so
 %{_libdir}/weston/wayland-backend.so
 %{_libdir}/weston/x11-backend.so
 %{_libdir}/weston/xwayland.so
