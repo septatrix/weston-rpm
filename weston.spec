@@ -5,7 +5,7 @@
 %endif
 
 Name:           weston
-Version:        1.3.93
+Version:        1.4.0
 Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -126,6 +126,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Fri Jan 24 2014 Richard Hughes <rhughes@redhat.com> - 1.4.0-1
+- Weston 1.4.0
+
 * Mon Jan 20 2014 Richard Hughes <rhughes@redhat.com> - 1.3.93-1
 - Weston 1.3.93
 
