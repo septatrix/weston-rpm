@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.4.0
-Release:        1%{?alphatag}%{?dist}
+Release:        2%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -126,6 +126,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Mon Jan 27 2014 Adam Jackson <ajax@redhat.com> 1.4.0-2
+- Rebuild for new sonames in libxcb 1.10
+
 * Fri Jan 24 2014 Richard Hughes <rhughes@redhat.com> - 1.4.0-1
 - Weston 1.4.0
 
