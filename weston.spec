@@ -5,7 +5,7 @@
 %endif
 
 Name:           weston
-Version:        1.4.0
+Version:        1.4.93
 Release:        2%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -87,7 +87,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %files
 %defattr(-,root,root,-)
 %doc README
-%doc data/COPYING
+%doc COPYING
 %{_bindir}/weston
 %{_bindir}/weston-info
 %{_bindir}/weston-launch
@@ -107,6 +107,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/weston/wayland-backend.so
 %{_libdir}/weston/x11-backend.so
 %{_libdir}/weston/xwayland.so
+%{_libdir}/weston/fullscreen-shell.so
 %{_libexecdir}/weston-*
 %{_mandir}/man1/*.1*
 %{_mandir}/man5/*.5*
@@ -126,6 +127,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Tue May 13 2014 Richard Hughes <rhughes@redhat.com> - 1.4.93-1
+- Weston 1.4.93
+
 * Mon Jan 27 2014 Adam Jackson <ajax@redhat.com> 1.4.0-2
 - Rebuild for new sonames in libxcb 1.10
 
