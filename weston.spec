@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.5.0
-Release:        2%{?alphatag}%{?dist}
+Release:        3%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -32,7 +32,10 @@ BuildRequires:  libtool
 %if 0%{?fedora} < 18
 BuildRequires:  libudev-devel
 %endif
+# libunwind available only on selected arches
+%ifarch %{arm} aarch64 hppa ia64 mips ppc %{power64} %{ix86} x86_64
 BuildRequires:	libunwind-devel
+%endif
 BuildRequires:  libwayland-client-devel
 BuildRequires:  libwayland-server-devel >= 1.3.0
 BuildRequires:  libwayland-cursor-devel
@@ -127,6 +130,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Tue May 27 2014 Dan Horák <dan[at]danny.cz> - 1.5.0-3
+- libunwind available only on selected arches
+
 * Wed May 21 2014 Richard Hughes <rhughes@redhat.com> - 1.5.0-1
 - Weston 1.5.0
 
