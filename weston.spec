@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.5.0
-Release:        3%{?alphatag}%{?dist}
+Release:        4%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -130,6 +130,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.5.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Tue May 27 2014 Dan Horák <dan[at]danny.cz> - 1.5.0-3
 - libunwind available only on selected arches
 
