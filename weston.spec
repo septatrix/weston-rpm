@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.5.0
-Release:        4%{?alphatag}%{?dist}
+Release:        5%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -53,6 +53,7 @@ BuildRequires:  pixman-devel
 BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
 BuildRequires:  systemd-devel
+BuildRequires:  dbus-devel
 BuildRequires:  lcms2-devel
 BuildRequires:  colord-devel
 %if 0%{?with_rdp}
@@ -130,6 +131,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Sun Jun 15 2014 Lubomir Rintel <lkundrak@v3.sk> - 1.5.0-5
+- Enable DBus support so that logind integration actually works
+
 * Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.5.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
