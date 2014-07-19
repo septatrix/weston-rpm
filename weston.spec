@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.5.0
-Release:        5%{?alphatag}%{?dist}
+Release:        6%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -131,6 +131,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Sat Jul 19 2014 Kevin Fenzi <kevin@scrye.com> 1.5.0-6
+- Rebuild for new libfreerdp
+
 * Sun Jun 15 2014 Lubomir Rintel <lkundrak@v3.sk> - 1.5.0-5
 - Enable DBus support so that logind integration actually works
 
