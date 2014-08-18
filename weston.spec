@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.5.0
-Release:        6%{?alphatag}%{?dist}
+Release:        7%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -131,6 +131,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Mon Aug 18 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.5.0-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Sat Jul 19 2014 Kevin Fenzi <kevin@scrye.com> 1.5.0-6
 - Rebuild for new libfreerdp
 
