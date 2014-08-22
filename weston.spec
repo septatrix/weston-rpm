@@ -5,8 +5,8 @@
 %endif
 
 Name:           weston
-Version:        1.5.0
-Release:        7%{?alphatag}%{?dist}
+Version:        1.5.91
+Release:        1%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -29,6 +29,7 @@ BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libpng-devel
 BuildRequires:  librsvg2
 BuildRequires:  libtool
+BuildRequires:  libinput-devel
 %if 0%{?fedora} < 18
 BuildRequires:  libudev-devel
 %endif
@@ -131,6 +132,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Fri Aug 22 2014 Kevin Fenzi <kevin@scrye.com> 1.5.91-1
+- Update to 1.5.91
+
 * Mon Aug 18 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.5.0-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
