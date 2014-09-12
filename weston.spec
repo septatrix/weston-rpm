@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.5.91
-Release:        1%{?alphatag}%{?dist}
+Release:        2%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -132,6 +132,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Fri Sep 12 2014 Peter Hutterer <peter.hutterer@redhat.com> - 1.5.91-2
+- Rebuild for libinput soname bump
+
 * Fri Aug 22 2014 Kevin Fenzi <kevin@scrye.com> 1.5.91-1
 - Update to 1.5.91
 
