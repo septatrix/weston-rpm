@@ -97,7 +97,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %doc COPYING
 %{_bindir}/weston
 %{_bindir}/weston-info
-%{_bindir}/weston-launch
+%attr(4755,root,root) %{_bindir}/weston-launch
 %{_bindir}/weston-terminal
 %{_bindir}/wcap-decode
 %dir %{_libdir}/weston
@@ -135,6 +135,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %changelog
 * Sun Sep 21 2014 Kalev Lember <kalevlember@gmail.com> - 1.6.0-2
 - Enable webp and vaapi support
+- Install weston-launch as setuid root (#1064023)
 
 * Sun Sep 21 2014 Kalev Lember <kalevlember@gmail.com> - 1.6.0-1
 - Update to 1.6.0
