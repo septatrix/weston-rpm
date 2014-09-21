@@ -68,6 +68,7 @@ or under another compositor.
 %package devel
 Summary: Common headers for weston
 License: MIT
+Requires: %{name}%{?_isa} = %{version}-%{release}
 %description devel
 Common headers for weston
 
@@ -134,6 +135,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %changelog
 * Sun Sep 21 2014 Kalev Lember <kalevlember@gmail.com> - 1.6.0-1
 - Update to 1.6.0
+- Pull in the main package for -devel subpackage
 
 * Fri Sep 12 2014 Peter Hutterer <peter.hutterer@redhat.com> - 1.5.91-2
 - Rebuild for libinput soname bump
