@@ -93,7 +93,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 
 %files
-%defattr(-,root,root,-)
 %doc README
 %doc COPYING
 %{_bindir}/weston
@@ -125,7 +124,6 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/weston/wayland.svg
 
 %files devel
-%defattr(-,root,root,-)
 %dir %{_includedir}/weston
 %{_includedir}/weston/compositor.h
 %{_includedir}/weston/config-parser.h
