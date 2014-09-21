@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.6.0
-Release:        1%{?alphatag}%{?dist}
+Release:        2%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -37,9 +37,11 @@ BuildRequires:  libudev-devel
 %ifarch %{arm} aarch64 hppa ia64 mips ppc %{power64} %{ix86} x86_64
 BuildRequires:	libunwind-devel
 %endif
+BuildRequires:  libva-devel
 BuildRequires:  libwayland-client-devel
 BuildRequires:  libwayland-server-devel >= 1.3.0
 BuildRequires:  libwayland-cursor-devel
+BuildRequires:  libwebp-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  libXcursor-devel
 BuildRequires:  libxkbcommon-devel >= 0.1.0-8
@@ -133,6 +135,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Sun Sep 21 2014 Kalev Lember <kalevlember@gmail.com> - 1.6.0-2
+- Enable webp and vaapi support
+
 * Sun Sep 21 2014 Kalev Lember <kalevlember@gmail.com> - 1.6.0-1
 - Update to 1.6.0
 - Pull in the main package for -devel subpackage
