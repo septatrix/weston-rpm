@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.6.0
-Release:        2%{?alphatag}%{?dist}
+Release:        3%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -133,6 +133,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Fri Dec 19 2014 Kevin Fenzi <kevin@scrye.com> 1.6.0-3
+- Rebuild for new freerdp
+
 * Sun Sep 21 2014 Kalev Lember <kalevlember@gmail.com> - 1.6.0-2
 - Enable webp and vaapi support
 - Install weston-launch as setuid root (#1064023)
