@@ -6,7 +6,7 @@
 
 Name:           weston
 Version:        1.6.0
-Release:        3%{?alphatag}%{?dist}
+Release:        4%{?alphatag}%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -18,6 +18,9 @@ Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.x
 %endif
 Source1:        make-git-snapshot.sh
 
+Patch01:        0001-libinput-device-use-the-new-merged-scroll-events.patch
+Patch02:        0001-libinput-device-use-the-discrete-axis-value-for-whee.patch
+
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
 BuildRequires:  glib2-devel
@@ -26,7 +29,7 @@ BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libpng-devel
 BuildRequires:  librsvg2
 BuildRequires:  libtool
-BuildRequires:  libinput-devel
+BuildRequires:  libinput-devel >= 0.8
 %if 0%{?fedora} < 18
 BuildRequires:  libudev-devel
 %endif
@@ -73,6 +76,8 @@ Common headers for weston
 
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
+%patch01 -p1
+%patch02 -p1
 
 %build
 # temporary force to pick up configure.ac changes
@@ -129,6 +134,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Fri Jan 16 2015 Peter Hutterer <peter.hutterer@redhat.com> 1.6.0-4
+- Update to and require libinput 0.8
+
 * Fri Dec 19 2014 Kevin Fenzi <kevin@scrye.com> 1.6.0-3
 - Rebuild for new freerdp
 
