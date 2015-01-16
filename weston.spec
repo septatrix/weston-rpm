@@ -18,9 +18,6 @@ Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.x
 %endif
 Source1:        make-git-snapshot.sh
 
-# git diff-tree -p 1.0.6..origin/1.0 > weston-$(git describe origin/1.0).patch
-#Patch0:		weston-1.0.5-11-g9a576c3.patch
-
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
 BuildRequires:  glib2-devel
@@ -76,7 +73,6 @@ Common headers for weston
 
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
-#%patch0 -p1 -b .git
 
 %build
 # temporary force to pick up configure.ac changes
