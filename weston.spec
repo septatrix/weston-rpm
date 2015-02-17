@@ -5,8 +5,9 @@
 %endif
 
 Name:           weston
-Version:        1.6.0
-Release:        4%{?alphatag}%{?dist}
+Version:        1.7.0
+#Release:        4%{?alphatag}%{?dist}
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -18,8 +19,8 @@ Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.x
 %endif
 Source1:        make-git-snapshot.sh
 
-Patch01:        0001-libinput-device-use-the-new-merged-scroll-events.patch
-Patch02:        0001-libinput-device-use-the-discrete-axis-value-for-whee.patch
+#Patch01:        0001-libinput-device-use-the-new-merged-scroll-events.patch
+#Patch02:        0001-libinput-device-use-the-discrete-axis-value-for-whee.patch
 
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
@@ -76,8 +77,8 @@ Common headers for weston
 
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
-%patch01 -p1
-%patch02 -p1
+#%patch01 -p1
+#%patch02 -p1
 
 %build
 # temporary force to pick up configure.ac changes
@@ -116,6 +117,8 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/weston/x11-backend.so
 %{_libdir}/weston/xwayland.so
 %{_libdir}/weston/fullscreen-shell.so
+%{_libdir}/weston/hmi-controller.so
+%{_libdir}/weston/ivi-shell.so
 %{_libexecdir}/weston-*
 %{_mandir}/man1/*.1*
 %{_mandir}/man5/*.5*
@@ -123,17 +126,22 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %dir %{_datadir}/weston
 %{_datadir}/weston/*.png
 %{_datadir}/weston/wayland.svg
+%{_datadir}/wayland-sessions/weston.desktop
 
 %files devel
 %dir %{_includedir}/weston
 %{_includedir}/weston/compositor.h
 %{_includedir}/weston/config-parser.h
+%{_includedir}/weston/timeline-object.h
 %{_includedir}/weston/matrix.h
 %{_includedir}/weston/version.h
 %{_includedir}/weston/zalloc.h
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Tue Feb 17 2015 Richard Hughes <rhughes@redhat.com> - 1.7.0-1
+- Update to 1.7.0
+
 * Fri Jan 16 2015 Peter Hutterer <peter.hutterer@redhat.com> 1.6.0-4
 - Update to and require libinput 0.8
 
