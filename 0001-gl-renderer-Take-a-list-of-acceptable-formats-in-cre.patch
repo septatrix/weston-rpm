@@ -1,0 +1,277 @@
+From e76f185050e86116ad03fdc0119505dd8c3b367a Mon Sep 17 00:00:00 2001
+From: Derek Foreman <derekf@osg.samsung.com>
+Date: Fri, 15 May 2015 12:12:39 -0500
+Subject: [PATCH 1/2] gl-renderer: Take a list of acceptable formats in create
+ functions
+
+Currently we pass either a single format or no formats to the gl renderer
+create and output_create functions.  We extend this to any number of
+formats so we can allow fallback formats if we don't get our first pick.
+
+Reviewed-By: Bryce Harrington <bryce@osg.samsung.com>
+Reviewed-By: Pekka Paalanen <pekka.paalanen@collabora.co.uk>
+Signed-off-by: Derek Foreman <derekf@osg.samsung.com>
+---
+ src/compositor-drm.c     |  5 ++--
+ src/compositor-fbdev.c   |  4 +--
+ src/compositor-wayland.c | 12 ++++----
+ src/compositor-x11.c     |  5 ++--
+ src/gl-renderer.c        | 71 ++++++++++++++++++++++++++++++++----------------
+ src/gl-renderer.h        |  6 ++--
+ 6 files changed, 66 insertions(+), 37 deletions(-)
+
+diff --git a/src/compositor-drm.c b/src/compositor-drm.c
+index 0cdb8f4..69bdcfd 100644
+--- a/src/compositor-drm.c
++++ b/src/compositor-drm.c
+@@ -1398,7 +1398,7 @@ drm_compositor_create_gl_renderer(struct drm_compositor *ec)
+ 
+ 	format = ec->format;
+ 	if (gl_renderer->create(&ec->base, EGL_PLATFORM_GBM_KHR, (void *) ec->gbm,
+-			       gl_renderer->opaque_attribs, &format) < 0) {
++			       gl_renderer->opaque_attribs, &format, 1) < 0) {
+ 		return -1;
+ 	}
+ 
+@@ -1620,7 +1620,8 @@ drm_output_init_egl(struct drm_output *output, struct drm_compositor *ec)
+ 				       (EGLNativeDisplayType)output->surface,
+ 				       output->surface,
+ 				       gl_renderer->opaque_attribs,
+-				       &format) < 0) {
++				       &format,
++				       1) < 0) {
+ 		weston_log("failed to create gl renderer output state\n");
+ 		gbm_surface_destroy(output->surface);
+ 		return -1;
+diff --git a/src/compositor-fbdev.c b/src/compositor-fbdev.c
+index 7c505ce..3f3394f 100644
+--- a/src/compositor-fbdev.c
++++ b/src/compositor-fbdev.c
+@@ -570,7 +570,7 @@ fbdev_output_create(struct fbdev_compositor *compositor,
+ 		if (gl_renderer->output_create(&output->base,
+ 					       (EGLNativeWindowType)NULL, NULL,
+ 					       gl_renderer->opaque_attribs,
+-					       NULL) < 0) {
++					       NULL, 0) < 0) {
+ 			weston_log("gl_renderer_output_create failed.\n");
+ 			goto out_shadow_surface;
+ 		}
+@@ -871,7 +871,7 @@ fbdev_compositor_create(struct wl_display *display, int *argc, char *argv[],
+ 		if (gl_renderer->create(&compositor->base, NO_EGL_PLATFORM,
+ 					EGL_DEFAULT_DISPLAY,
+ 					gl_renderer->opaque_attribs,
+-					NULL) < 0) {
++					NULL, 0) < 0) {
+ 			weston_log("gl_renderer_create failed.\n");
+ 			goto out_launcher;
+ 		}
+diff --git a/src/compositor-wayland.c b/src/compositor-wayland.c
+index 303151c..c9983e0 100644
+--- a/src/compositor-wayland.c
++++ b/src/compositor-wayland.c
+@@ -648,7 +648,8 @@ wayland_output_init_gl_renderer(struct wayland_output *output)
+ 				       output->gl.egl_window,
+ 				       output->gl.egl_window,
+ 				       gl_renderer->alpha_attribs,
+-				       NULL) < 0)
++				       NULL,
++				       0) < 0)
+ 		goto cleanup_window;
+ 
+ 	return 0;
+@@ -1970,10 +1971,11 @@ wayland_compositor_create(struct wl_display *display, int use_pixman,
+ 
+ 	if (!c->use_pixman) {
+ 		if (gl_renderer->create(&c->base,
+-					       EGL_PLATFORM_WAYLAND_KHR,
+-					       c->parent.wl_display,
+-					       gl_renderer->alpha_attribs,
+-					       NULL) < 0) {
++					EGL_PLATFORM_WAYLAND_KHR,
++					c->parent.wl_display,
++					gl_renderer->alpha_attribs,
++					NULL,
++					0) < 0) {
+ 			weston_log("Failed to initialize the GL renderer; "
+ 				   "falling back to pixman.\n");
+ 			c->use_pixman = 1;
+diff --git a/src/compositor-x11.c b/src/compositor-x11.c
+index 5129e85..3565677 100644
+--- a/src/compositor-x11.c
++++ b/src/compositor-x11.c
+@@ -906,7 +906,8 @@ x11_compositor_create_output(struct x11_compositor *c, int x, int y,
+ 						 (EGLNativeWindowType) output->window,
+ 						 &xid,
+ 						 gl_renderer->opaque_attribs,
+-						 NULL);
++						 NULL,
++						 0);
+ 		if (ret < 0)
+ 			return NULL;
+ 	}
+@@ -1493,7 +1494,7 @@ init_gl_renderer(struct x11_compositor *c)
+ 		return -1;
+ 
+ 	ret = gl_renderer->create(&c->base, EGL_PLATFORM_X11_KHR, (void *) c->dpy,
+-				  gl_renderer->opaque_attribs, NULL);
++				  gl_renderer->opaque_attribs, NULL, 0);
+ 
+ 	return ret;
+ }
+diff --git a/src/gl-renderer.c b/src/gl-renderer.c
+index ae3122f..248c8aa 100644
+--- a/src/gl-renderer.c
++++ b/src/gl-renderer.c
+@@ -1898,14 +1898,38 @@ log_egl_config_info(EGLDisplay egldpy, EGLConfig eglconfig)
+ }
+ 
+ static int
++match_config_to_visual(EGLDisplay egl_display,
++		       EGLint visual_id,
++		       EGLConfig *configs,
++		       int count)
++{
++	int i;
++
++	for (i = 0; i < count; ++i) {
++		EGLint id;
++
++		if (!eglGetConfigAttrib(egl_display,
++				configs[i], EGL_NATIVE_VISUAL_ID,
++				&id))
++			continue;
++
++		if (id == visual_id)
++			return i;
++	}
++
++	weston_log("Unable to find an appropriate EGL config.\n");
++	return -1;
++}
++
++static int
+ egl_choose_config(struct gl_renderer *gr, const EGLint *attribs,
+-		  const EGLint *visual_id,
++		  const EGLint *visual_id, const int n_ids,
+ 		  EGLConfig *config_out)
+ {
+ 	EGLint count = 0;
+ 	EGLint matched = 0;
+ 	EGLConfig *configs;
+-	int i;
++	int i, config_index = -1;
+ 
+ 	if (!eglGetConfigs(gr->egl_display, NULL, 0, &count) || count < 1)
+ 		return -1;
+@@ -1915,31 +1939,27 @@ egl_choose_config(struct gl_renderer *gr, const EGLint *attribs,
+ 		return -1;
+ 
+ 	if (!eglChooseConfig(gr->egl_display, attribs, configs,
+-			      count, &matched))
++			      count, &matched) || !matched)
+ 		goto out;
+ 
+-	for (i = 0; i < matched; ++i) {
+-		EGLint id;
++	if (!visual_id)
++		config_index = 0;
+ 
+-		if (visual_id) {
+-			if (!eglGetConfigAttrib(gr->egl_display,
+-					configs[i], EGL_NATIVE_VISUAL_ID,
+-					&id))
+-				continue;
++	for (i = 0; config_index == -1 && i < n_ids; i++)
++		config_index = match_config_to_visual(gr->egl_display,
++						      visual_id[i],
++						      configs,
++						      matched);
+ 
+-			if (id != 0 && id != *visual_id)
+-				continue;
+-		}
+-
+-		*config_out = configs[i];
+-
+-		free(configs);
+-		return 0;
+-	}
++	if (config_index != -1)
++		*config_out = configs[config_index];
+ 
+ out:
+ 	free(configs);
+-	return -1;
++	if (config_index == -1)
++		return -1;
++
++	return 0;
+ }
+ 
+ static void
+@@ -1976,7 +1996,8 @@ gl_renderer_output_create(struct weston_output *output,
+ 			  EGLNativeWindowType window_for_legacy,
+ 			  void *window_for_platform,
+ 			  const EGLint *attribs,
+-			  const EGLint *visual_id)
++			  const EGLint *visual_id,
++			  int n_ids)
+ {
+ 	struct weston_compositor *ec = output->compositor;
+ 	struct gl_renderer *gr = get_renderer(ec);
+@@ -1984,7 +2005,8 @@ gl_renderer_output_create(struct weston_output *output,
+ 	EGLConfig egl_config;
+ 	int i;
+ 
+-	if (egl_choose_config(gr, attribs, visual_id, &egl_config) == -1) {
++	if (egl_choose_config(gr, attribs, visual_id,
++			      n_ids, &egl_config) == -1) {
+ 		weston_log("failed to choose EGL config for output\n");
+ 		return -1;
+ 	}
+@@ -2260,7 +2282,7 @@ platform_to_extension(EGLenum platform)
+ static int
+ gl_renderer_create(struct weston_compositor *ec, EGLenum platform,
+ 	void *native_window, const EGLint *attribs,
+-	const EGLint *visual_id)
++	const EGLint *visual_id, int n_ids)
+ {
+ 	struct gl_renderer *gr;
+ 	EGLint major, minor;
+@@ -2323,7 +2345,8 @@ gl_renderer_create(struct weston_compositor *ec, EGLenum platform,
+ 		goto err_egl;
+ 	}
+ 
+-	if (egl_choose_config(gr, attribs, visual_id, &gr->egl_config) < 0) {
++	if (egl_choose_config(gr, attribs, visual_id,
++			      n_ids, &gr->egl_config) < 0) {
+ 		weston_log("failed to choose EGL config\n");
+ 		goto err_egl;
+ 	}
+diff --git a/src/gl-renderer.h b/src/gl-renderer.h
+index ebc139f..ceb4206 100644
+--- a/src/gl-renderer.h
++++ b/src/gl-renderer.h
+@@ -76,7 +76,8 @@ struct gl_renderer_interface {
+ 		      EGLenum platform,
+ 		      void *native_window,
+ 		      const EGLint *attribs,
+-		      const EGLint *visual_id);
++		      const EGLint *visual_id,
++		      const int n_ids);
+ 
+ 	EGLDisplay (*display)(struct weston_compositor *ec);
+ 
+@@ -84,7 +85,8 @@ struct gl_renderer_interface {
+ 			     EGLNativeWindowType window_for_legacy,
+ 			     void *window_for_platform,
+ 			     const EGLint *attribs,
+-			     const EGLint *visual_id);
++			     const EGLint *visual_id,
++			     const int n_ids);
+ 
+ 	void (*output_destroy)(struct weston_output *output);
+ 
+-- 
+2.4.1
+

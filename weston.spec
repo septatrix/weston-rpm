@@ -5,9 +5,9 @@
 %endif
 
 Name:           weston
-Version:        1.7.0
+Version:        1.7.92
 #Release:        4%{?alphatag}%{?dist}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -21,6 +21,9 @@ Source1:        make-git-snapshot.sh
 
 #Patch01:        0001-libinput-device-use-the-new-merged-scroll-events.patch
 #Patch02:        0001-libinput-device-use-the-discrete-axis-value-for-whee.patch
+
+Patch1: 0001-gl-renderer-Take-a-list-of-acceptable-formats-in-cre.patch
+Patch2: 0002-compositor-drm-pass-ARGB-fallback-to-gl-create-funct.patch
 
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
@@ -77,8 +80,8 @@ Common headers for weston
 
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
-#%patch01 -p1
-#%patch02 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 # temporary force to pick up configure.ac changes
@@ -134,11 +137,16 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_includedir}/weston/config-parser.h
 %{_includedir}/weston/timeline-object.h
 %{_includedir}/weston/matrix.h
+%{_includedir}/weston/platform.h
 %{_includedir}/weston/version.h
 %{_includedir}/weston/zalloc.h
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Tue May 26 2015 Adam Jackson <ajax@redhat.com> 1.7.92-1
+- weston 1.7.92
+- Backport patches to fall back to argb buffer if no xrgb is available
+
 * Tue Mar 10 2015 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.0-2
 - Rebuild for libinput soname bump
 
