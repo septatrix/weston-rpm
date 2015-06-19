@@ -7,7 +7,7 @@
 Name:           weston
 Version:        1.7.92
 #Release:        4%{?alphatag}%{?dist}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -143,6 +143,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.92-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Tue May 26 2015 Adam Jackson <ajax@redhat.com> 1.7.92-1
 - weston 1.7.92
 - Backport patches to fall back to argb buffer if no xrgb is available
