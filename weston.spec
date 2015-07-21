@@ -5,9 +5,9 @@
 %endif
 
 Name:           weston
-Version:        1.7.92
+Version:        1.8.0
 #Release:        4%{?alphatag}%{?dist}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -21,9 +21,6 @@ Source1:        make-git-snapshot.sh
 
 #Patch01:        0001-libinput-device-use-the-new-merged-scroll-events.patch
 #Patch02:        0001-libinput-device-use-the-discrete-axis-value-for-whee.patch
-
-Patch1: 0001-gl-renderer-Take-a-list-of-acceptable-formats-in-cre.patch
-Patch2: 0002-compositor-drm-pass-ARGB-fallback-to-gl-create-funct.patch
 
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
@@ -80,12 +77,9 @@ Common headers for weston
 
 %prep
 %setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
-%patch1 -p1
-%patch2 -p1
 
 %build
-# temporary force to pick up configure.ac changes
-%if 1 || 0%{?gitdate}
+%if 0%{?gitdate}
 autoreconf -ivf
 %endif
 %configure --disable-static --disable-setuid-install --enable-xwayland \
@@ -143,6 +137,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Tue Jul 21 2015 Adam Jackson <ajax@redhat.com> 1.8.0-1
+- weston 1.8.0
+
 * Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.92-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
