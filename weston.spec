@@ -93,7 +93,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 
 %files
 %doc README
-%doc COPYING
+%license COPYING
 %{_bindir}/weston
 %{_bindir}/weston-info
 %attr(4755,root,root) %{_bindir}/weston-launch
@@ -139,6 +139,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %changelog
 * Fri Aug 21 2015 Kalev Lember <klember@redhat.com> - 1.8.91-1
 - Update to 1.8.91
+- Use license macro for COPYING
 
 * Tue Jul 21 2015 Adam Jackson <ajax@redhat.com> 1.8.0-1
 - weston 1.8.0
