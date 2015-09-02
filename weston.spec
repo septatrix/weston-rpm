@@ -5,7 +5,7 @@
 %endif
 
 Name:           weston
-Version:        1.8.91
+Version:        1.8.92
 #Release:        4%{?alphatag}%{?dist}
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
@@ -134,6 +134,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Wed Sep 02 2015 Kalev Lember <klember@redhat.com> - 1.8.92-1
+- Update to 1.8.92
+
 * Fri Aug 21 2015 Kalev Lember <klember@redhat.com> - 1.8.91-1
 - Update to 1.8.91
 - Use license macro for COPYING
