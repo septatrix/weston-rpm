@@ -19,9 +19,6 @@ Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.x
 %endif
 Source1:        make-git-snapshot.sh
 
-#Patch01:        0001-libinput-device-use-the-new-merged-scroll-events.patch
-#Patch02:        0001-libinput-device-use-the-discrete-axis-value-for-whee.patch
-
 BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
 BuildRequires:  glib2-devel
