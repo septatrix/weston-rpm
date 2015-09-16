@@ -1,32 +1,22 @@
-#define gitdate 20130515
-
 %if 0%{?fedora} >= 21
 %define with_rdp 1
 %endif
 
 Name:           weston
 Version:        1.8.92
-#Release:        4%{?alphatag}%{?dist}
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
-%if 0%{?gitdate}
-Source0:        %{name}-%{gitdate}.tar.bz2
-%else
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
-%endif
-Source1:        make-git-snapshot.sh
 
-BuildRequires:  autoconf
 BuildRequires:  cairo-devel >= 1.10.0
 BuildRequires:  glib2-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libpng-devel
 BuildRequires:  librsvg2
-BuildRequires:  libtool
 BuildRequires:  libinput-devel >= 0.8
 %if 0%{?fedora} < 18
 BuildRequires:  libudev-devel
@@ -73,12 +63,9 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 Common headers for weston
 
 %prep
-%setup -q -n %{name}-%{?gitdate:%{gitdate}}%{!?gitdate:%{version}}
+%setup -q
 
 %build
-%if 0%{?gitdate}
-autoreconf -ivf
-%endif
 %configure --disable-static --disable-setuid-install --enable-xwayland \
 	   %{?with_rdp:--enable-rdp-compositor}
 make %{?_smp_mflags}
