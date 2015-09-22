@@ -62,7 +62,7 @@ Common headers for weston
 make %{?_smp_mflags}
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+%make_install
 
 find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 
@@ -112,6 +112,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %changelog
 * Tue Sep 22 2015 Kalev Lember <klember@redhat.com> - 1.9.0-1
 - Update to 1.9.0
+- Use make_install macro
 
 * Wed Sep 16 2015 Kalev Lember <klember@redhat.com> - 1.8.93-1
 - Update to 1.8.93
