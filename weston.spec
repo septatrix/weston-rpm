@@ -1,7 +1,3 @@
-%if 0%{?fedora} >= 21
-%define with_rdp 1
-%endif
-
 Name:           weston
 Version:        1.9.0
 Release:        1%{?dist}
@@ -18,9 +14,6 @@ BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libpng-devel
 BuildRequires:  librsvg2
 BuildRequires:  libinput-devel >= 0.8
-%if 0%{?fedora} < 18
-BuildRequires:  libudev-devel
-%endif
 # libunwind available only on selected arches
 %ifarch %{arm} aarch64 hppa ia64 mips ppc %{power64} %{ix86} x86_64
 BuildRequires:	libunwind-devel
@@ -47,9 +40,7 @@ BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  lcms2-devel
 BuildRequires:  colord-devel
-%if 0%{?with_rdp}
 BuildRequires:  freerdp-devel >= 1.1.0
-%endif
 
 %description
 Weston is the reference wayland compositor that can run on KMS, under X11
@@ -67,7 +58,7 @@ Common headers for weston
 
 %build
 %configure --disable-static --disable-setuid-install --enable-xwayland \
-	   %{?with_rdp:--enable-rdp-compositor}
+           --enable-rdp-compositor
 make %{?_smp_mflags}
 
 %install
@@ -90,9 +81,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/weston/drm-backend.so
 %{_libdir}/weston/fbdev-backend.so
 %{_libdir}/weston/headless-backend.so
-%if 0%{?with_rdp}
 %{_libdir}/weston/rdp-backend.so
-%endif
 %{_libdir}/weston/gl-renderer.so
 %{_libdir}/weston/wayland-backend.so
 %{_libdir}/weston/x11-backend.so
