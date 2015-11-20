@@ -1,6 +1,6 @@
 Name:           weston
 Version:        1.9.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -110,6 +110,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Fri Nov 20 2015 Kalev Lember <klember@redhat.com> - 1.9.0-2
+- Rebuilt for freerdp soname bump
+
 * Tue Sep 22 2015 Kalev Lember <klember@redhat.com> - 1.9.0-1
 - Update to 1.9.0
 - Use make_install macro
