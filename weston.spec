@@ -1,6 +1,6 @@
 Name:           weston
-Version:        1.9.0
-Release:        3%{?dist}
+Version:        1.9.92
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -41,6 +41,7 @@ BuildRequires:  dbus-devel
 BuildRequires:  lcms2-devel
 BuildRequires:  colord-devel
 BuildRequires:  freerdp-devel >= 1.1.0
+BuildRequires:  wayland-protocols-devel
 
 %description
 Weston is the reference wayland compositor that can run on KMS, under X11
@@ -102,6 +103,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %dir %{_includedir}/weston
 %{_includedir}/weston/compositor.h
 %{_includedir}/weston/config-parser.h
+%{_includedir}/weston/ivi-layout-export.h
 %{_includedir}/weston/timeline-object.h
 %{_includedir}/weston/matrix.h
 %{_includedir}/weston/platform.h
@@ -110,6 +112,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Thu Feb 04 2016 Kalev Lember <klember@redhat.com> - 1.9.92-1
+- Update to 1.9.92
+
 * Mon Dec 28 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 1.9.0-3
 - Rebuilt for libwebp soname bump
 
