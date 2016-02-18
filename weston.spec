@@ -1,5 +1,5 @@
 Name:           weston
-Version:        1.9.92
+Version:        1.10.0
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -20,7 +20,7 @@ BuildRequires:	libunwind-devel
 %endif
 BuildRequires:  libva-devel
 BuildRequires:  libwayland-client-devel
-BuildRequires:  libwayland-server-devel >= 1.3.0
+BuildRequires:  libwayland-server-devel >= 1.10.0
 BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libwebp-devel
 BuildRequires:  libxcb-devel
@@ -112,6 +112,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Thu Feb 18 2016 Kalev Lember <klember@redhat.com> - 1.10.0-1
+- Update to 1.10.0
+
 * Thu Feb 04 2016 Kalev Lember <klember@redhat.com> - 1.9.92-1
 - Update to 1.9.92
 
