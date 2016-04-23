@@ -1,0 +1,27 @@
+From cc1a2a718392589b3125be165f57928a668a9d26 Mon Sep 17 00:00:00 2001
+From: Adam Williamson <awilliam@redhat.com>
+Date: Fri, 22 Apr 2016 17:12:33 -0700
+Subject: [PATCH] update freerdp pkgconfig module name
+
+they renamed it to include the major release number.
+https://github.com/FreeRDP/FreeRDP/commit/6fa36081
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 670200c..6dafb7c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -242,7 +242,7 @@ AM_CONDITIONAL([ENABLE_RDP_COMPOSITOR],
+                [test x$enable_rdp_compositor = xyes])
+ if test x$enable_rdp_compositor = xyes; then
+   AC_DEFINE([BUILD_RDP_COMPOSITOR], [1], [Build the RDP compositor])
+-  PKG_CHECK_MODULES(RDP_COMPOSITOR, [freerdp >= 1.1.0])
++  PKG_CHECK_MODULES(RDP_COMPOSITOR, [freerdp2 >= 1.1.0])
+ 
+   SAVED_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="$CPPFLAGS $RDP_COMPOSITOR_CFLAGS"
+-- 
+2.5.5
+
