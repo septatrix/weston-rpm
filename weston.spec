@@ -1,6 +1,6 @@
 Name:           weston
-Version:        1.10.0
-Release:        2%{?dist}
+Version:        1.10.91
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -116,18 +116,13 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/wayland-sessions/weston.desktop
 
 %files devel
-%dir %{_includedir}/weston
-%{_includedir}/weston/compositor.h
-%{_includedir}/weston/config-parser.h
-%{_includedir}/weston/ivi-layout-export.h
-%{_includedir}/weston/timeline-object.h
-%{_includedir}/weston/matrix.h
-%{_includedir}/weston/platform.h
-%{_includedir}/weston/version.h
-%{_includedir}/weston/zalloc.h
+%{_includedir}/weston/
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Sun May 08 2016 Kalev Lember <klember@redhat.com> - 1.10.91-1
+- Update to 1.10.91
+
 * Fri Apr 22 2016 Adam Williamson <awilliam@redhat.com> - 1.10.0-2
 - rebuild for changed freerdp sonames
 
