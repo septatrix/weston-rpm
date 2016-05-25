@@ -1,17 +1,11 @@
 Name:           weston
-Version:        1.10.92
+Version:        1.10.93
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
-# https://bugs.freedesktop.org/show_bug.cgi?id=94520
-# Update freerdp pkgconfig module name
-Patch0:         0001-update-freerdp-pkgconfig-module-name.patch
-# https://bugs.freedesktop.org/show_bug.cgi?id=94520
-# adjust to a freerdp API change
-Patch1:         0002-pass-width-and-height-to-rfx_context_reset-and-nsc_c.patch
 
 BuildRequires:  cairo-devel >= 1.10.0
 BuildRequires:  glib2-devel
@@ -48,10 +42,6 @@ BuildRequires:  lcms2-devel
 BuildRequires:  colord-devel
 BuildRequires:  freerdp-devel >= 2.0.0
 BuildRequires:  wayland-protocols-devel
-# For autoreconf for Patch0, remove when no longer needed
-BuildRequires:  autoconf
-BuildRequires:  automake
-BuildRequires:  libtool
 
 %description
 Weston is the reference wayland compositor that can run on KMS, under X11
@@ -66,14 +56,8 @@ Common headers for weston
 
 %prep
 %setup -q
-# autosetup does not work with patch1 for some absurd reason
-%patch0 -p1
-%patch1 -p1
 
 %build
-# required for Patch0, drop when no longer needed
-autoreconf -i
-
 %configure --disable-static --disable-setuid-install --enable-xwayland \
            --enable-rdp-compositor
 make %{?_smp_mflags}
@@ -120,6 +104,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Wed May 25 2016 Kalev Lember <klember@redhat.com> - 1.10.93-1
+- Update to 1.10.93
+
 * Wed May 18 2016 Kalev Lember <klember@redhat.com> - 1.10.92-1
 - Update to 1.10.92
 
