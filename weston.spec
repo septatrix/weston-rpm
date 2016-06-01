@@ -1,5 +1,5 @@
 Name:           weston
-Version:        1.10.93
+Version:        1.11.0
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -104,6 +104,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/pkgconfig/weston.pc
 
 %changelog
+* Wed Jun 01 2016 Kalev Lember <klember@redhat.com> - 1.11.0-1
+- Update to 1.11.0
+
 * Wed May 25 2016 Kalev Lember <klember@redhat.com> - 1.10.93-1
 - Update to 1.10.93
 
