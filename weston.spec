@@ -1,6 +1,6 @@
 Name:           weston
 Version:        1.11.91
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
 License:        BSD and CC-BY-SA
@@ -74,6 +74,9 @@ make %{?_smp_mflags}
 
 find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 
+%post libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
+
 %files
 %doc README
 %license COPYING
@@ -122,6 +125,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Wed Aug 17 2016 Kalev Lember <klember@redhat.com> - 1.11.91-2
+- Run ldconfig scripts for the new -libs subpackage
+
 * Wed Aug 17 2016 Kalev Lember <klember@redhat.com> - 1.11.91-1
 - Update to 1.11.91
 - Add a -libs subpackage
