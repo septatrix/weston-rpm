@@ -1,5 +1,5 @@
 Name:           weston
-Version:        1.11.0
+Version:        1.11.91
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 Group:          User Interface/X
@@ -19,9 +19,6 @@ BuildRequires:  libinput-devel >= 0.8
 BuildRequires:	libunwind-devel
 %endif
 BuildRequires:  libva-devel
-BuildRequires:  libwayland-client-devel
-BuildRequires:  libwayland-server-devel >= 1.10.0
-BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libwebp-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  libXcursor-devel
@@ -41,16 +38,26 @@ BuildRequires:  dbus-devel
 BuildRequires:  lcms2-devel
 BuildRequires:  colord-devel
 BuildRequires:  freerdp-devel >= 2.0.0
+BuildRequires:  wayland-devel >= 1.11.91
 BuildRequires:  wayland-protocols-devel
+
+Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 
 %description
 Weston is the reference wayland compositor that can run on KMS, under X11
 or under another compositor.
 
+%package        libs
+Summary:        Weston compositor libraries
+
+%description    libs
+This package contains Weston compositor libraries.
+
 %package devel
 Summary: Common headers for weston
 License: MIT
 Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 %description devel
 Common headers for weston
 
@@ -79,14 +86,6 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/weston/cms-colord.so
 %{_libdir}/weston/cms-static.so
 %{_libdir}/weston/desktop-shell.so
-%{_libdir}/weston/drm-backend.so
-%{_libdir}/weston/fbdev-backend.so
-%{_libdir}/weston/headless-backend.so
-%{_libdir}/weston/rdp-backend.so
-%{_libdir}/weston/gl-renderer.so
-%{_libdir}/weston/wayland-backend.so
-%{_libdir}/weston/x11-backend.so
-%{_libdir}/weston/xwayland.so
 %{_libdir}/weston/fullscreen-shell.so
 %{_libdir}/weston/hmi-controller.so
 %{_libdir}/weston/ivi-shell.so
@@ -99,11 +98,34 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_datadir}/weston/wayland.svg
 %{_datadir}/wayland-sessions/weston.desktop
 
+%files libs
+%license COPYING
+%dir %{_libdir}/libweston-1
+%{_libdir}/libweston-1/drm-backend.so
+%{_libdir}/libweston-1/fbdev-backend.so
+%{_libdir}/libweston-1/gl-renderer.so
+%{_libdir}/libweston-1/headless-backend.so
+%{_libdir}/libweston-1/rdp-backend.so
+%{_libdir}/libweston-1/wayland-backend.so
+%{_libdir}/libweston-1/x11-backend.so
+%{_libdir}/libweston-1/xwayland.so
+%{_libdir}/libweston-1.so.0*
+%{_libdir}/libweston-desktop-1.so.0*
+
 %files devel
+%{_includedir}/libweston-1/
 %{_includedir}/weston/
+%{_libdir}/pkgconfig/libweston-1.pc
+%{_libdir}/pkgconfig/libweston-desktop-1.pc
 %{_libdir}/pkgconfig/weston.pc
+%{_libdir}/libweston-1.so
+%{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Wed Aug 17 2016 Kalev Lember <klember@redhat.com> - 1.11.91-1
+- Update to 1.11.91
+- Add a -libs subpackage
+
 * Wed Jun 01 2016 Kalev Lember <klember@redhat.com> - 1.11.0-1
 - Update to 1.11.0
 
