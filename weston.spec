@@ -2,7 +2,7 @@ Name:           weston
 Version:        1.11.92
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
-Group:          User Interface/X
+
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
@@ -127,6 +127,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %changelog
 * Wed Aug 31 2016 Kalev Lember <klember@redhat.com> - 1.11.92-1
 - Update to 1.11.92
+- Don't set group tags
 
 * Wed Aug 17 2016 Kalev Lember <klember@redhat.com> - 1.11.91-2
 - Run ldconfig scripts for the new -libs subpackage
