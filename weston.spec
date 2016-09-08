@@ -1,5 +1,5 @@
 Name:           weston
-Version:        1.11.92
+Version:        1.11.93
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
@@ -125,6 +125,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Thu Sep 08 2016 Kalev Lember <klember@redhat.com> - 1.11.93-1
+- Update to 1.11.93
+
 * Wed Aug 31 2016 Kalev Lember <klember@redhat.com> - 1.11.92-1
 - Update to 1.11.92
 - Don't set group tags
