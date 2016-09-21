@@ -7,13 +7,13 @@ License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
-BuildRequires:  cairo-devel >= 1.10.0
+BuildRequires:  cairo-devel
 BuildRequires:  glib2-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libpng-devel
 BuildRequires:  librsvg2
-BuildRequires:  libinput-devel >= 0.8
+BuildRequires:  libinput-devel
 # libunwind available only on selected arches
 %ifarch %{arm} aarch64 hppa ia64 mips ppc %{power64} %{ix86} x86_64
 BuildRequires:	libunwind-devel
@@ -22,8 +22,8 @@ BuildRequires:  libva-devel
 BuildRequires:  libwebp-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  libXcursor-devel
-BuildRequires:  libxkbcommon-devel >= 0.1.0-8
-BuildRequires:  mesa-libEGL-devel >= 8.1
+BuildRequires:  libxkbcommon-devel
+BuildRequires:  mesa-libEGL-devel
 BuildRequires:  mesa-libgbm-devel
 BuildRequires:  mesa-libGLES-devel
 BuildRequires:  mesa-libGLU-devel
