@@ -1,5 +1,5 @@
 Name:           weston
-Version:        1.11.94
+Version:        1.12.0
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
@@ -38,7 +38,7 @@ BuildRequires:  dbus-devel
 BuildRequires:  lcms2-devel
 BuildRequires:  colord-devel
 BuildRequires:  freerdp-devel >= 2.0.0
-BuildRequires:  wayland-devel >= 1.11.91
+BuildRequires:  wayland-devel >= 1.12.0
 BuildRequires:  wayland-protocols-devel
 
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
@@ -125,6 +125,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Wed Sep 21 2016 Kalev Lember <klember@redhat.com> - 1.12.0-1
+- Update to 1.12.0
+
 * Wed Sep 14 2016 Kalev Lember <klember@redhat.com> - 1.11.94-1
 - Update to 1.11.94
 
