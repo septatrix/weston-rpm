@@ -1,6 +1,6 @@
 Name:           weston
 Version:        1.12.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -125,6 +125,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Wed Feb 01 2017 Sandro Mani <manisandro@gmail.com> - 1.12.0-2
+- Rebuild (libwebp)
+
 * Wed Sep 21 2016 Kalev Lember <klember@redhat.com> - 1.12.0-1
 - Update to 1.12.0
 
