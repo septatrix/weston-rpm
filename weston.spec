@@ -1,6 +1,13 @@
+
+# set to enable rpd support
+# seems broken on f26+ version of freerpd (bug #1424540)
+%if 0%{?fedora} < 26
+%global rpd 1
+%endif
+
 Name:           weston
 Version:        1.12.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -37,7 +44,9 @@ BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  lcms2-devel
 BuildRequires:  colord-devel
+%if 0%{?rpd}
 BuildRequires:  freerdp-devel >= 2.0.0
+%endif
 BuildRequires:  wayland-devel >= 1.12.0
 BuildRequires:  wayland-protocols-devel
 
@@ -65,8 +74,17 @@ Common headers for weston
 %setup -q
 
 %build
-%configure --disable-static --disable-setuid-install --enable-xwayland \
-           --enable-rdp-compositor
+%configure \
+  --disable-silent-rules \
+  --disable-static \
+  --disable-setuid-install \
+  --enable-xwayland \
+  %{?rdp:--enable-rdp-compositor}
+
+# https://fedoraproject.org/wiki/Packaging:Guidelines#Beware_of_Rpath
+sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+
 make %{?_smp_mflags}
 
 %install
@@ -108,7 +126,9 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-1/fbdev-backend.so
 %{_libdir}/libweston-1/gl-renderer.so
 %{_libdir}/libweston-1/headless-backend.so
+%if 0%{?rpd}
 %{_libdir}/libweston-1/rdp-backend.so
+%endif
 %{_libdir}/libweston-1/wayland-backend.so
 %{_libdir}/libweston-1/x11-backend.so
 %{_libdir}/libweston-1/xwayland.so
@@ -125,6 +145,11 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Sat Mar 04 2017 Rex Dieter <rdieter@fedoraproject.org> - 1.12.0-4
+- %%build: --disable-silent-rules
+- fix FTBFS: disable broken rpd support (#1424540)
+- fix rpaths
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.12.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
