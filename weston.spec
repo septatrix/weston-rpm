@@ -1,54 +1,66 @@
-
-# set to enable rpd support
-# seems broken on f26+ version of freerpd (bug #1424540)
-%if 0%{?fedora} < 26
-%global rpd 1
-%endif
-
 Name:           weston
 Version:        1.12.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Reference compositor for Wayland
-
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
+
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
-BuildRequires:  cairo-devel
 BuildRequires:  glib2-devel
-BuildRequires:  libdrm-devel
 BuildRequires:  libjpeg-turbo-devel
-BuildRequires:  libpng-devel
-BuildRequires:  librsvg2
-BuildRequires:  libinput-devel
+BuildRequires:  pam-devel
+BuildRequires:  pkgconfig(cairo)
+BuildRequires:  pkgconfig(cairo) >= 1.10.0
+BuildRequires:  pkgconfig(cairo-egl) >= 1.11.3
+BuildRequires:  pkgconfig(cairo-gl)
+BuildRequires:  pkgconfig(cairo-xcb)
+BuildRequires:  pkgconfig(colord) >= 0.1.27
+BuildRequires:  pkgconfig(dbus-1) >= 1.6
+BuildRequires:  pkgconfig(egl)
+BuildRequires:  pkgconfig(gbm) >= 10.2
+BuildRequires:  pkgconfig(glesv2)
+BuildRequires:  pkgconfig(lcms2)
+BuildRequires:  pkgconfig(libdrm) >= 2.4.30
+BuildRequires:  pkgconfig(libdrm_intel)
+BuildRequires:  pkgconfig(libinput) >= 0.8.0
+BuildRequires:  pkgconfig(libpng)
+BuildRequires:  pkgconfig(libsystemd) >= 209
+BuildRequires:  pkgconfig(libudev) >= 136
 # libunwind available only on selected arches
 %ifarch %{arm} aarch64 hppa ia64 mips ppc %{power64} %{ix86} x86_64
 BuildRequires:	libunwind-devel
 %endif
-BuildRequires:  libva-devel
-BuildRequires:  libwebp-devel
-BuildRequires:  libxcb-devel
-BuildRequires:  libXcursor-devel
-BuildRequires:  libxkbcommon-devel
-BuildRequires:  mesa-libEGL-devel
-BuildRequires:  mesa-libgbm-devel
-BuildRequires:  mesa-libGLES-devel
-BuildRequires:  mesa-libGLU-devel
-BuildRequires:  mesa-libwayland-egl-devel
-BuildRequires:  mtdev-devel
-BuildRequires:  pam-devel
-BuildRequires:  pixman-devel
+BuildRequires:  pkgconfig(libva) >= 0.34.0
+BuildRequires:  pkgconfig(libva-drm) >= 0.34.0
+BuildRequires:  pkgconfig(libwebp)
+BuildRequires:  pkgconfig(libxml-2.0) >= 2.6
+BuildRequires:  pkgconfig(mtdev) >= 1.1.0
+BuildRequires:  pkgconfig(pangocairo)
+BuildRequires:  pkgconfig(pixman-1) >= 0.25.2
+BuildRequires:  pkgconfig(wayland-client) >= 1.12.0
+BuildRequires:  pkgconfig(wayland-cursor)
+BuildRequires:  pkgconfig(wayland-egl)
+BuildRequires:  pkgconfig(wayland-protocols) >= 1.7
+BuildRequires:  pkgconfig(wayland-scanner)
+BuildRequires:  pkgconfig(wayland-server)
+BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(x11-xcb)
+BuildRequires:  pkgconfig(xcb)
+BuildRequires:  pkgconfig(xcb-composite)
+BuildRequires:  pkgconfig(xcb-shm)
+BuildRequires:  pkgconfig(xcb-xfixes)
+BuildRequires:  pkgconfig(xcb-xkb)
+BuildRequires:  pkgconfig(xcursor)
+BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
-BuildRequires:  systemd-devel
-BuildRequires:  dbus-devel
-BuildRequires:  lcms2-devel
-BuildRequires:  colord-devel
-%if 0%{?rpd}
-BuildRequires:  freerdp-devel >= 2.0.0
+
+%if 0%{?fedora} >= 26
+BuildRequires:  compat-freerdp12
+%else
+BuildRequires:  pkgconfig(freerdp2) >= 2.0.0
 %endif
-BuildRequires:  wayland-devel >= 1.12.0
-BuildRequires:  wayland-protocols-devel
 
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -56,17 +68,18 @@ Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 Weston is the reference wayland compositor that can run on KMS, under X11
 or under another compositor.
 
-%package        libs
-Summary:        Weston compositor libraries
+%package libs
+Summary:    Weston compositor libraries
 
-%description    libs
+%description libs
 This package contains Weston compositor libraries.
 
 %package devel
-Summary: Common headers for weston
-License: MIT
-Requires: %{name}%{?_isa} = %{version}-%{release}
-Requires: %{name}-libs%{?_isa} = %{version}-%{release}
+Summary:    Common headers for weston
+License:    MIT
+Requires:   %{name}%{?_isa} = %{version}-%{release}
+Requires:   %{name}-libs%{?_isa} = %{version}-%{release}
+
 %description devel
 Common headers for weston
 
@@ -79,7 +92,7 @@ Common headers for weston
   --disable-static \
   --disable-setuid-install \
   --enable-xwayland \
-  %{?rdp:--enable-rdp-compositor}
+  --enable-rdp-compositor
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Beware_of_Rpath
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -90,14 +103,15 @@ make %{?_smp_mflags}
 %install
 %make_install
 
-find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
+find %{buildroot} -name \*.la -delete
 
 %post libs -p /sbin/ldconfig
+
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc README
 %license COPYING
+%doc README
 %{_bindir}/weston
 %{_bindir}/weston-info
 %attr(4755,root,root) %{_bindir}/weston-launch
@@ -126,9 +140,7 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-1/fbdev-backend.so
 %{_libdir}/libweston-1/gl-renderer.so
 %{_libdir}/libweston-1/headless-backend.so
-%if 0%{?rpd}
 %{_libdir}/libweston-1/rdp-backend.so
-%endif
 %{_libdir}/libweston-1/wayland-backend.so
 %{_libdir}/libweston-1/x11-backend.so
 %{_libdir}/libweston-1/xwayland.so
@@ -145,6 +157,10 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 %{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Tue Mar 07 2017 Simone Caronni <negativo17@gmail.com> - 1.12.0-5
+- Update build requirements, enable RDP again through FreeRDP 1.2 compatibility
+  package.
+
 * Sat Mar 04 2017 Rex Dieter <rdieter@fedoraproject.org> - 1.12.0-4
 - %%build: --disable-silent-rules
 - fix FTBFS: disable broken rpd support (#1424540)
