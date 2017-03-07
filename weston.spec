@@ -57,7 +57,7 @@ BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
 
 %if 0%{?fedora} >= 26
-BuildRequires:  compat-freerdp12
+BuildRequires:  compat-freerdp12-devel
 %else
 BuildRequires:  pkgconfig(freerdp2) >= 2.0.0
 %endif
