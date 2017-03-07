@@ -22,7 +22,6 @@ BuildRequires:  pkgconfig(gbm) >= 10.2
 BuildRequires:  pkgconfig(glesv2)
 BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libdrm) >= 2.4.30
-BuildRequires:  pkgconfig(libdrm_intel)
 BuildRequires:  pkgconfig(libinput) >= 0.8.0
 BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libsystemd) >= 209
