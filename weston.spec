@@ -1,6 +1,6 @@
 Name:           weston
 Version:        1.12.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Reference compositor for Wayland
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
@@ -156,6 +156,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-1.so
 
 %changelog
+* Tue Mar 21 2017 Simone Caronni <negativo17@gmail.com> - 1.12.0-6
+- Build requirement compat-freerdp12 has been renamed to freerdp1.2.
+
 * Tue Mar 07 2017 Simone Caronni <negativo17@gmail.com> - 1.12.0-5
 - Update build requirements, enable RDP again through FreeRDP 1.2 compatibility
   package.
