@@ -2,9 +2,9 @@ Name:           weston
 Version:        1.12.0
 Release:        6%{?dist}
 Summary:        Reference compositor for Wayland
+
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
-
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires:  glib2-devel
@@ -67,19 +67,19 @@ Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 Weston is the reference wayland compositor that can run on KMS, under X11
 or under another compositor.
 
-%package libs
-Summary:    Weston compositor libraries
+%package        libs
+Summary:        Weston compositor libraries
 
-%description libs
+%description    libs
 This package contains Weston compositor libraries.
 
-%package devel
-Summary:    Common headers for weston
-License:    MIT
-Requires:   %{name}%{?_isa} = %{version}-%{release}
-Requires:   %{name}-libs%{?_isa} = %{version}-%{release}
+%package        devel
+Summary:        Common headers for weston
+License:        MIT
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 
-%description devel
+%description    devel
 Common headers for weston
 
 %prep
