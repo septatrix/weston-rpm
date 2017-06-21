@@ -1,6 +1,6 @@
 Name:           weston
-Version:        1.12.0
-Release:        6%{?dist}
+Version:        2.0.0
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -134,28 +134,31 @@ find %{buildroot} -name \*.la -delete
 
 %files libs
 %license COPYING
-%dir %{_libdir}/libweston-1
-%{_libdir}/libweston-1/drm-backend.so
-%{_libdir}/libweston-1/fbdev-backend.so
-%{_libdir}/libweston-1/gl-renderer.so
-%{_libdir}/libweston-1/headless-backend.so
-%{_libdir}/libweston-1/rdp-backend.so
-%{_libdir}/libweston-1/wayland-backend.so
-%{_libdir}/libweston-1/x11-backend.so
-%{_libdir}/libweston-1/xwayland.so
-%{_libdir}/libweston-1.so.0*
-%{_libdir}/libweston-desktop-1.so.0*
+%dir %{_libdir}/libweston-2
+%{_libdir}/libweston-2/drm-backend.so
+%{_libdir}/libweston-2/fbdev-backend.so
+%{_libdir}/libweston-2/gl-renderer.so
+%{_libdir}/libweston-2/headless-backend.so
+%{_libdir}/libweston-2/rdp-backend.so
+%{_libdir}/libweston-2/wayland-backend.so
+%{_libdir}/libweston-2/x11-backend.so
+%{_libdir}/libweston-2/xwayland.so
+%{_libdir}/libweston-2.so.0*
+%{_libdir}/libweston-desktop-2.so.0*
 
 %files devel
-%{_includedir}/libweston-1/
+%{_includedir}/libweston-2/
 %{_includedir}/weston/
-%{_libdir}/pkgconfig/libweston-1.pc
-%{_libdir}/pkgconfig/libweston-desktop-1.pc
+%{_libdir}/pkgconfig/libweston-2.pc
+%{_libdir}/pkgconfig/libweston-desktop-2.pc
 %{_libdir}/pkgconfig/weston.pc
-%{_libdir}/libweston-1.so
-%{_libdir}/libweston-desktop-1.so
+%{_libdir}/libweston-2.so
+%{_libdir}/libweston-desktop-2.so
 
 %changelog
+* Wed Jun 21 2017 Kalev Lember <klember@redhat.com> - 2.0.0-1
+- Update to 2.0.0
+
 * Tue Mar 21 2017 Simone Caronni <negativo17@gmail.com> - 1.12.0-6
 - Build requirement compat-freerdp12 has been renamed to freerdp1.2.
 
