@@ -1,6 +1,6 @@
 Name:           weston
 Version:        2.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -12,8 +12,6 @@ BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pam-devel
 BuildRequires:  pkgconfig(cairo)
 BuildRequires:  pkgconfig(cairo) >= 1.10.0
-BuildRequires:  pkgconfig(cairo-egl) >= 1.11.3
-BuildRequires:  pkgconfig(cairo-gl)
 BuildRequires:  pkgconfig(cairo-xcb)
 BuildRequires:  pkgconfig(colord) >= 0.1.27
 BuildRequires:  pkgconfig(dbus-1) >= 1.6
@@ -156,6 +154,10 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-2.so
 
 %changelog
+* Thu Jul 13 2017 Adam Jackson <ajax@redhat.com> - 2.0.0-2
+- Stop BuildRequiring cairo-gl. We install none of the additional demo clients
+  it builds, and it's going away from the cairo package soon.
+
 * Wed Jun 21 2017 Kalev Lember <klember@redhat.com> - 2.0.0-1
 - Update to 2.0.0
 
