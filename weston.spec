@@ -1,3 +1,5 @@
+%global apiver 2
+
 Name:           weston
 Version:        2.0.0
 Release:        2%{?dist}
@@ -132,26 +134,26 @@ find %{buildroot} -name \*.la -delete
 
 %files libs
 %license COPYING
-%dir %{_libdir}/libweston-2
-%{_libdir}/libweston-2/drm-backend.so
-%{_libdir}/libweston-2/fbdev-backend.so
-%{_libdir}/libweston-2/gl-renderer.so
-%{_libdir}/libweston-2/headless-backend.so
-%{_libdir}/libweston-2/rdp-backend.so
-%{_libdir}/libweston-2/wayland-backend.so
-%{_libdir}/libweston-2/x11-backend.so
-%{_libdir}/libweston-2/xwayland.so
-%{_libdir}/libweston-2.so.0*
-%{_libdir}/libweston-desktop-2.so.0*
+%dir %{_libdir}/libweston-%{apiver}
+%{_libdir}/libweston-%{apiver}/drm-backend.so
+%{_libdir}/libweston-%{apiver}/fbdev-backend.so
+%{_libdir}/libweston-%{apiver}/gl-renderer.so
+%{_libdir}/libweston-%{apiver}/headless-backend.so
+%{_libdir}/libweston-%{apiver}/rdp-backend.so
+%{_libdir}/libweston-%{apiver}/wayland-backend.so
+%{_libdir}/libweston-%{apiver}/x11-backend.so
+%{_libdir}/libweston-%{apiver}/xwayland.so
+%{_libdir}/libweston-%{apiver}.so.0*
+%{_libdir}/libweston-desktop-%{apiver}.so.0*
 
 %files devel
-%{_includedir}/libweston-2/
+%{_includedir}/libweston-%{apiver}/
 %{_includedir}/weston/
-%{_libdir}/pkgconfig/libweston-2.pc
-%{_libdir}/pkgconfig/libweston-desktop-2.pc
+%{_libdir}/pkgconfig/libweston-%{apiver}.pc
+%{_libdir}/pkgconfig/libweston-desktop-%{apiver}.pc
 %{_libdir}/pkgconfig/weston.pc
-%{_libdir}/libweston-2.so
-%{_libdir}/libweston-desktop-2.so
+%{_libdir}/libweston-%{apiver}.so
+%{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
 * Thu Jul 13 2017 Adam Jackson <ajax@redhat.com> - 2.0.0-2
