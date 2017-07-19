@@ -1,8 +1,8 @@
-%global apiver 2
+%global apiver 3
 
 Name:           weston
-Version:        2.0.0
-Release:        2%{?dist}
+Version:        2.99.91
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -156,6 +156,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Wed Jul 19 2017 Kalev Lember <klember@redhat.com> - 2.99.91-1
+- Update to 2.99.91
+
 * Thu Jul 13 2017 Adam Jackson <ajax@redhat.com> - 2.0.0-2
 - Stop BuildRequiring cairo-gl. We install none of the additional demo clients
   it builds, and it's going away from the cairo package soon.
