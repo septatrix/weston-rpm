@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        2.99.92
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -156,6 +156,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Sun Jul 30 2017 Florian Weimer <fweimer@redhat.com> - 2.99.92-2
+- Rebuild with binutils fix for ppc64le (#1475636)
+
 * Wed Jul 26 2017 Kalev Lember <klember@redhat.com> - 2.99.92-1
 - Update to 2.99.92
 
