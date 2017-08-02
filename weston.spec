@@ -1,8 +1,8 @@
 %global apiver 3
 
 Name:           weston
-Version:        2.99.92
-Release:        2%{?dist}
+Version:        2.99.93
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -156,6 +156,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Wed Aug 02 2017 Kalev Lember <klember@redhat.com> - 2.99.93-1
+- Update to 2.99.93
+
 * Sun Jul 30 2017 Florian Weimer <fweimer@redhat.com> - 2.99.92-2
 - Rebuild with binutils fix for ppc64le (#1475636)
 
