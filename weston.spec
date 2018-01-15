@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        3.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -156,6 +156,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Mon Jan 15 2018 Björn Esser <besser82@fedoraproject.org> - 3.0.0-2
+- Rebuilt for libva.so.2
+
 * Wed Aug 09 2017 Kalev Lember <klember@redhat.com> - 3.0.0-1
 - Update to 3.0.0
 
