@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        3.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -18,6 +18,7 @@ BuildRequires:  pkgconfig(cairo-xcb)
 BuildRequires:  pkgconfig(colord) >= 0.1.27
 BuildRequires:  pkgconfig(dbus-1) >= 1.6
 BuildRequires:  pkgconfig(egl)
+BuildRequires:  pkgconfig(freerdp2) >= 2.0.0
 BuildRequires:  pkgconfig(gbm) >= 10.2
 BuildRequires:  pkgconfig(glesv2)
 BuildRequires:  pkgconfig(lcms2)
@@ -54,12 +55,6 @@ BuildRequires:  pkgconfig(xcursor)
 BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
-
-%if 0%{?fedora}
-BuildRequires:  freerdp1.2-devel
-%else
-BuildRequires:  pkgconfig(freerdp2) >= 2.0.0
-%endif
 
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -156,6 +151,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Tue Jan 16 2018 Simone Caronni <negativo17@gmail.com> - 3.0.0-3
+- Drop FreeRDP 1.2 requirement, use FreeRDP 2.0.
+
 * Mon Jan 15 2018 Björn Esser <besser82@fedoraproject.org> - 3.0.0-2
 - Rebuilt for libva.so.2
 
