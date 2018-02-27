@@ -1,8 +1,8 @@
-%global apiver 3
+%global apiver 4
 
 Name:           weston
-Version:        3.0.0
-Release:        4%{?dist}
+Version:        3.0.91
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -41,7 +41,7 @@ BuildRequires:  pkgconfig(pixman-1) >= 0.25.2
 BuildRequires:  pkgconfig(wayland-client) >= 1.12.0
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
-BuildRequires:  pkgconfig(wayland-protocols) >= 1.7
+BuildRequires:  pkgconfig(wayland-protocols) >= 1.13
 BuildRequires:  pkgconfig(wayland-scanner)
 BuildRequires:  pkgconfig(wayland-server)
 BuildRequires:  pkgconfig(x11)
@@ -151,6 +151,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Tue Feb 27 2018 Kalev Lember <klember@redhat.com> - 3.0.91-1
+- Update to 3.0.91
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
