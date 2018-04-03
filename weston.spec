@@ -1,7 +1,7 @@
 %global apiver 4
 
 Name:           weston
-Version:        3.0.92
+Version:        3.0.93
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
@@ -151,6 +151,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Tue Apr 03 2018 Kalev Lember <klember@redhat.com> - 3.0.93-1
+- Update to 3.0.93
+
 * Tue Mar 20 2018 Kalev Lember <klember@redhat.com> - 3.0.92-1
 - Update to 3.0.92
 
