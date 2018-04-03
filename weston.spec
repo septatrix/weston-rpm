@@ -99,10 +99,6 @@ make %{?_smp_mflags}
 
 find %{buildroot} -name \*.la -delete
 
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
-
 %files
 %license COPYING
 %doc README
@@ -153,6 +149,7 @@ find %{buildroot} -name \*.la -delete
 %changelog
 * Tue Apr 03 2018 Kalev Lember <klember@redhat.com> - 3.0.93-1
 - Update to 3.0.93
+- Remove ldconfig scriptlets
 
 * Tue Mar 20 2018 Kalev Lember <klember@redhat.com> - 3.0.92-1
 - Update to 3.0.92
