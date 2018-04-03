@@ -18,7 +18,6 @@ BuildRequires:  pkgconfig(cairo-xcb)
 BuildRequires:  pkgconfig(colord) >= 0.1.27
 BuildRequires:  pkgconfig(dbus-1) >= 1.6
 BuildRequires:  pkgconfig(egl)
-BuildRequires:  pkgconfig(freerdp2) >= 2.0.0
 BuildRequires:  pkgconfig(gbm) >= 10.2
 BuildRequires:  pkgconfig(glesv2)
 BuildRequires:  pkgconfig(lcms2)
@@ -55,6 +54,12 @@ BuildRequires:  pkgconfig(xcursor)
 BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
+
+%if 0%{?fedora}
+BuildRequires:  freerdp1.2-devel
+%else
+BuildRequires:  pkgconfig(freerdp2) >= 2.0.0
+%endif
 
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -150,6 +155,7 @@ find %{buildroot} -name \*.la -delete
 * Tue Apr 03 2018 Kalev Lember <klember@redhat.com> - 3.0.93-1
 - Update to 3.0.93
 - Remove ldconfig scriptlets
+- Build with FreeRDP 1.2
 
 * Tue Mar 20 2018 Kalev Lember <klember@redhat.com> - 3.0.92-1
 - Update to 3.0.92
