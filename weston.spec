@@ -9,6 +9,7 @@ License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
+BuildRequires:  gcc
 BuildRequires:  glib2-devel
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pam-devel
