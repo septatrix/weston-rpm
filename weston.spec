@@ -1,8 +1,8 @@
-%global apiver 4
+%global apiver 5
 
 Name:           weston
-Version:        4.0.0
-Release:        2%{?dist}
+Version:        4.0.92
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -153,6 +153,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Sun Jul 29 2018 Kalev Lember <klember@redhat.com> - 4.0.92-1
+- Update to 4.0.92
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
