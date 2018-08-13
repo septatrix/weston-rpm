@@ -1,8 +1,8 @@
 %global apiver 5
 
 Name:           weston
-Version:        4.0.92
-Release:        2%{?dist}
+Version:        4.0.93
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -153,6 +153,9 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-desktop-%{apiver}.so
 
 %changelog
+* Mon Aug 13 2018 Kalev Lember <klember@redhat.com> - 4.0.93-1
+- Update to 4.0.93
+
 * Tue Jul 31 2018 Florian Weimer <fweimer@redhat.com> - 4.0.92-2
 - Rebuild with fixed binutils
 
