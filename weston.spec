@@ -107,7 +107,7 @@ find %{buildroot} -name \*.la -delete
 
 %files
 %license COPYING
-%doc README
+%doc README.md
 %{_bindir}/weston
 %{_bindir}/weston-info
 %attr(4755,root,root) %{_bindir}/weston-launch
