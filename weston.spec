@@ -1,8 +1,8 @@
-%global apiver 5
+%global apiver 6
 
 Name:           weston
-Version:        5.0.0
-Release:        2%{?dist}
+Version:        5.0.91
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -19,10 +19,12 @@ BuildRequires:  pkgconfig(cairo-xcb)
 BuildRequires:  pkgconfig(colord) >= 0.1.27
 BuildRequires:  pkgconfig(dbus-1) >= 1.6
 BuildRequires:  pkgconfig(egl)
+BuildRequires:  pkgconfig(freerdp2)
 BuildRequires:  pkgconfig(gbm) >= 10.2
 BuildRequires:  pkgconfig(glesv2)
 BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libdrm) >= 2.4.30
+BuildRequires:  pkgconfig(libevdev)
 BuildRequires:  pkgconfig(libinput) >= 0.8.0
 BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libsystemd) >= 209
@@ -56,12 +58,6 @@ BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
 
-%if 0%{?fedora}
-BuildRequires:  freerdp1.2-devel
-%else
-BuildRequires:  pkgconfig(freerdp2) >= 2.0.0
-%endif
-
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 
 %description
@@ -91,6 +87,7 @@ Common headers for weston
   --disable-silent-rules \
   --disable-static \
   --disable-setuid-install \
+  --enable-autotools \
   --enable-xwayland \
   --enable-rdp-compositor
 
@@ -109,8 +106,10 @@ find %{buildroot} -name \*.la -delete
 %license COPYING
 %doc README.md
 %{_bindir}/weston
+%{_bindir}/weston-debug
 %{_bindir}/weston-info
 %attr(4755,root,root) %{_bindir}/weston-launch
+%{_bindir}/weston-screenshooter
 %{_bindir}/weston-terminal
 %{_bindir}/wcap-decode
 %dir %{_libdir}/weston
@@ -151,8 +150,13 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/pkgconfig/weston.pc
 %{_libdir}/libweston-%{apiver}.so
 %{_libdir}/libweston-desktop-%{apiver}.so
+%{_datadir}/pkgconfig/libweston-%{apiver}-protocols.pc
+%{_datadir}/weston/protocols/
 
 %changelog
+* Thu Feb 28 2019 Kalev Lember <klember@redhat.com> - 5.0.91-1
+- Update to 5.0.91
+
 * Sun Feb 03 2019 Fedora Release Engineering <releng@fedoraproject.org> - 5.0.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
