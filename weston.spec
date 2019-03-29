@@ -1,7 +1,7 @@
 %global apiver 6
 
 Name:           weston
-Version:        5.0.91
+Version:        6.0.0
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
@@ -154,6 +154,9 @@ find %{buildroot} -name \*.la -delete
 %{_datadir}/weston/protocols/
 
 %changelog
+* Fri Mar 29 2019 Kalev Lember <klember@redhat.com> - 6.0.0-1
+- Update to 6.0.0
+
 * Thu Feb 28 2019 Kalev Lember <klember@redhat.com> - 5.0.91-1
 - Update to 5.0.91
 
