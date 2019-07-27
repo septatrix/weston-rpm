@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        6.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -154,6 +154,9 @@ find %{buildroot} -name \*.la -delete
 %{_datadir}/weston/protocols/
 
 %changelog
+* Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Fri Mar 29 2019 Kalev Lember <klember@redhat.com> - 6.0.0-1
 - Update to 6.0.0
 
