@@ -1,8 +1,15 @@
 %global apiver 6
 
+# have_simple_dmabuf_drm_client is defined in configure.ac
+%ifarch ppc64le s390x
+%global have_simple_dmabuf_drm_client 0
+%else
+%global have_simple_dmabuf_drm_client 1
+%endif
+
 Name:           weston
 Version:        6.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -70,6 +77,12 @@ Summary:        Weston compositor libraries
 %description    libs
 This package contains Weston compositor libraries.
 
+%package        demo
+Summary:        Weston demo program files
+
+%description    demo
+This package contains Weston demo program files.
+
 %package        devel
 Summary:        Common headers for weston
 License:        MIT
@@ -89,7 +102,8 @@ Common headers for weston
   --disable-setuid-install \
   --enable-autotools \
   --enable-xwayland \
-  --enable-rdp-compositor
+  --enable-rdp-compositor \
+  --enable-demo-clients-install
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Beware_of_Rpath
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -142,6 +156,37 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-%{apiver}.so.0*
 %{_libdir}/libweston-desktop-%{apiver}.so.0*
 
+%files demo
+%license COPYING
+%{_bindir}/weston-calibrator
+%{_bindir}/weston-clickdot
+%{_bindir}/weston-cliptest
+%{_bindir}/weston-confine
+%{_bindir}/weston-dnd
+%{_bindir}/weston-editor
+%{_bindir}/weston-eventdemo
+%{_bindir}/weston-flower
+%{_bindir}/weston-fullscreen
+%{_bindir}/weston-image
+%{_bindir}/weston-multi-resource
+%{_bindir}/weston-presentation-shm
+%{_bindir}/weston-resizor
+%{_bindir}/weston-scaler
+%{_bindir}/weston-simple-damage
+%if %have_simple_dmabuf_drm_client
+%{_bindir}/weston-simple-dmabuf-drm
+%endif
+%{_bindir}/weston-simple-dmabuf-egl
+%{_bindir}/weston-simple-dmabuf-v4l
+%{_bindir}/weston-simple-egl
+%{_bindir}/weston-simple-shm
+%{_bindir}/weston-simple-touch
+%{_bindir}/weston-smoke
+%{_bindir}/weston-stacking
+%{_bindir}/weston-subsurfaces
+%{_bindir}/weston-touch-calibrator
+%{_bindir}/weston-transformed
+
 %files devel
 %{_includedir}/libweston-%{apiver}/
 %{_includedir}/weston/
@@ -154,6 +199,9 @@ find %{buildroot} -name \*.la -delete
 %{_datadir}/weston/protocols/
 
 %changelog
+* Wed Sep 04 2019 Takao Fujiwara <tfujiwar@redhat.com> - 6.0.0-3
+- Add weston-demo sub package to include weston-editor
+
 * Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
