@@ -1,4 +1,4 @@
-%global apiver 6
+%global apiver 7
 
 # have_simple_dmabuf_drm_client is defined in configure.ac
 %ifarch ppc64le s390x
@@ -8,8 +8,8 @@
 %endif
 
 Name:           weston
-Version:        6.0.0
-Release:        3%{?dist}
+Version:        %{apiver}.0.0
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -20,6 +20,8 @@ BuildRequires:  gcc
 BuildRequires:  glib2-devel
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pam-devel
+# ninja-build is a dependency from meson
+BuildRequires:  meson
 BuildRequires:  pkgconfig(cairo)
 BuildRequires:  pkgconfig(cairo) >= 1.10.0
 BuildRequires:  pkgconfig(cairo-xcb)
@@ -38,7 +40,7 @@ BuildRequires:  pkgconfig(libsystemd) >= 209
 BuildRequires:  pkgconfig(libudev) >= 136
 # libunwind available only on selected arches
 %ifarch %{arm} aarch64 hppa ia64 mips ppc %{power64} %{ix86} x86_64
-BuildRequires:	libunwind-devel
+BuildRequires:  libunwind-devel
 %endif
 BuildRequires:  pkgconfig(libva) >= 0.34.0
 BuildRequires:  pkgconfig(libva-drm) >= 0.34.0
@@ -64,6 +66,9 @@ BuildRequires:  pkgconfig(xcursor)
 BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
+BuildRequires:  gstreamer1-devel
+BuildRequires:  gstreamer1-plugins-base-devel
+BuildRequires:  pipewire-devel
 
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -96,25 +101,11 @@ Common headers for weston
 %setup -q
 
 %build
-%configure \
-  --disable-silent-rules \
-  --disable-static \
-  --disable-setuid-install \
-  --enable-autotools \
-  --enable-xwayland \
-  --enable-rdp-compositor \
-  --enable-demo-clients-install
-
-# https://fedoraproject.org/wiki/Packaging:Guidelines#Beware_of_Rpath
-sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
-sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
-
-make %{?_smp_mflags}
+export MESON=`rpm --eval '%{meson}' | sed 's/--auto-features=enabled//'`
+eval "$MESON -Dsimple-dmabuf-drm=auto"
 
 %install
-%make_install
-
-find %{buildroot} -name \*.la -delete
+%meson_install
 
 %files
 %license COPYING
@@ -133,6 +124,8 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/weston/fullscreen-shell.so
 %{_libdir}/weston/hmi-controller.so
 %{_libdir}/weston/ivi-shell.so
+%{_libdir}/weston/screen-share.so
+%{_libdir}/weston/systemd-notify.so
 %{_libexecdir}/weston-*
 %{_mandir}/man1/*.1*
 %{_mandir}/man5/*.5*
@@ -149,6 +142,8 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-%{apiver}/fbdev-backend.so
 %{_libdir}/libweston-%{apiver}/gl-renderer.so
 %{_libdir}/libweston-%{apiver}/headless-backend.so
+%{_libdir}/libweston-%{apiver}/pipewire-plugin.so
+%{_libdir}/libweston-%{apiver}/remoting-plugin.so
 %{_libdir}/libweston-%{apiver}/rdp-backend.so
 %{_libdir}/libweston-%{apiver}/wayland-backend.so
 %{_libdir}/libweston-%{apiver}/x11-backend.so
@@ -173,6 +168,7 @@ find %{buildroot} -name \*.la -delete
 %{_bindir}/weston-resizor
 %{_bindir}/weston-scaler
 %{_bindir}/weston-simple-damage
+%{_bindir}/weston-content_protection
 %if %have_simple_dmabuf_drm_client
 %{_bindir}/weston-simple-dmabuf-drm
 %endif
@@ -196,9 +192,14 @@ find %{buildroot} -name \*.la -delete
 %{_libdir}/libweston-%{apiver}.so
 %{_libdir}/libweston-desktop-%{apiver}.so
 %{_datadir}/pkgconfig/libweston-%{apiver}-protocols.pc
-%{_datadir}/weston/protocols/
+%{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Thu Sep 12 2019 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.0-1
+- Update to 7.0.0
+- Use meson as build system
+- Use the apivar macro in the version line
+
 * Wed Sep 04 2019 Takao Fujiwara <tfujiwar@redhat.com> - 6.0.0-3
 - Add weston-demo sub package to include weston-editor
 
