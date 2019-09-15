@@ -101,7 +101,7 @@ Common headers for weston
 %setup -q
 
 %build
-export MESON=`rpm --eval '%{meson}' | sed 's/--auto-features=enabled//'`
+export MESON=`echo '%{meson}' | sed 's/--auto-features=enabled//'`
 eval "$MESON -Dsimple-dmabuf-drm=auto"
 
 %install
