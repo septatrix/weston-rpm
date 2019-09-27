@@ -107,6 +107,12 @@ eval "$MESON -Dsimple-dmabuf-drm=auto"
 %install
 %meson_install
 
+%post
+/usr/bin/getent group weston-launch >/dev/null || /usr/sbin/groupadd -r weston-launch
+
+%postun
+/usr/sbin/groupdel weston-launch || true
+
 %files
 %license COPYING
 %doc README.md
@@ -195,6 +201,9 @@ eval "$MESON -Dsimple-dmabuf-drm=auto"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Fri Sep 27 2019 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.0-2
+- Add and remove the group 'weston-launch' with the package in the post section
+
 * Thu Sep 12 2019 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.0-1
 - Update to 7.0.0
 - Use meson as build system
