@@ -3,7 +3,7 @@
 Name:           weston
 #Version:       %%{apiver}.0.0
 Version:        7.0.93
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
