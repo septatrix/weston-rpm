@@ -95,11 +95,15 @@ Common headers for weston
 %setup -q
 
 %build
-export MESON=`echo '%{meson}' | sed 's/--auto-features=enabled//'`
-eval "$MESON -Dsimple-dmabuf-drm=auto"
+%meson
+%meson_build
 
 %install
 %meson_install
+
+%check
+# may be standalone tests can be done
+#%%meson_test
 
 %post
 /usr/bin/getent group weston-launch >/dev/null || /usr/sbin/groupadd -r weston-launch
@@ -193,6 +197,9 @@ eval "$MESON -Dsimple-dmabuf-drm=auto"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Mon Jan 20 2020 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.93-2
+- Do the standard meson build with the meson macros 
+
 * Mon Jan 20 2020 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.93-1
 - Update to RC1 for Weston 8.0 (version 7.0.93)
 - Remove have_simple_dmabuf_drm_client variable
