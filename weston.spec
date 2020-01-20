@@ -1,15 +1,9 @@
-%global apiver 7
-
-# have_simple_dmabuf_drm_client is defined in configure.ac
-%ifarch ppc64le s390x
-%global have_simple_dmabuf_drm_client 0
-%else
-%global have_simple_dmabuf_drm_client 1
-%endif
+%global apiver 8
 
 Name:           weston
-Version:        %{apiver}.0.0
-Release:        2%{?dist}
+#Version:       %%{apiver}.0.0
+Version:        7.0.93
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -132,6 +126,7 @@ eval "$MESON -Dsimple-dmabuf-drm=auto"
 %{_libdir}/weston/ivi-shell.so
 %{_libdir}/weston/screen-share.so
 %{_libdir}/weston/systemd-notify.so
+%{_libdir}/weston/libexec_weston.so*
 %{_libexecdir}/weston-*
 %{_mandir}/man1/*.1*
 %{_mandir}/man5/*.5*
@@ -175,9 +170,6 @@ eval "$MESON -Dsimple-dmabuf-drm=auto"
 %{_bindir}/weston-scaler
 %{_bindir}/weston-simple-damage
 %{_bindir}/weston-content_protection
-%if %have_simple_dmabuf_drm_client
-%{_bindir}/weston-simple-dmabuf-drm
-%endif
 %{_bindir}/weston-simple-dmabuf-egl
 %{_bindir}/weston-simple-dmabuf-v4l
 %{_bindir}/weston-simple-egl
@@ -201,6 +193,11 @@ eval "$MESON -Dsimple-dmabuf-drm=auto"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Mon Jan 20 2020 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.93-1
+- Update to RC1 for Weston 8.0 (version 7.0.93)
+- Remove have_simple_dmabuf_drm_client variable
+- The executable weston-simple-dmabuf-drm is gone
+
 * Fri Sep 27 2019 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.0-2
 - Add and remove the group 'weston-launch' with the package in the post section
 
