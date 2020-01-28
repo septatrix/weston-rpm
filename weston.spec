@@ -1,9 +1,8 @@
 %global apiver 8
 
 Name:           weston
-#Version:       %%{apiver}.0.0
-Version:        7.0.93
-Release:        2%{?dist}
+Version:        %{apiver}.0.0
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -197,6 +196,9 @@ Common headers for weston
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Tue Jan 28 2020 Gerd Pokorra <gp@zimt.uni-siegen.de> - 8.0.0-1
+- Update to 8.0.0
+
 * Mon Jan 20 2020 Gerd Pokorra <gp@zimt.uni-siegen.de> - 7.0.93-2
 - Do the standard meson build with the meson macros 
 
