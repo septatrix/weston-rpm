@@ -1,8 +1,9 @@
 %global apiver 8
+%global meson_prob 1
 
 Name:           weston
 Version:        %{apiver}.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -10,6 +11,9 @@ URL:            http://wayland.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires:  gcc
+%if %meson_prob
+BuildRequires:  g++
+%endif
 BuildRequires:  glib2-devel
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pam-devel
@@ -64,6 +68,7 @@ BuildRequires:  gstreamer1-plugins-base-devel
 BuildRequires:  pipewire-devel
 
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
+Requires:       mesa-dri-drivers
 
 %description
 Weston is the reference wayland compositor that can run on KMS, under X11
@@ -94,7 +99,11 @@ Common headers for weston
 %setup -q
 
 %build
+%if %{meson_prob}
+%meson -Dpipewire=false
+%else
 %meson
+%endif
 %meson_build
 
 %install
@@ -146,7 +155,9 @@ Common headers for weston
 %{_libdir}/libweston-%{apiver}/fbdev-backend.so
 %{_libdir}/libweston-%{apiver}/gl-renderer.so
 %{_libdir}/libweston-%{apiver}/headless-backend.so
+%if !%{meson_prob}
 %{_libdir}/libweston-%{apiver}/pipewire-plugin.so
+%endif
 %{_libdir}/libweston-%{apiver}/remoting-plugin.so
 %{_libdir}/libweston-%{apiver}/rdp-backend.so
 %{_libdir}/libweston-%{apiver}/wayland-backend.so
@@ -196,6 +207,10 @@ Common headers for weston
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Tue Feb 18 2020 Gerd Pokorra <gp@zimt.uni-siegen.de> - 8.0.0-3
+- Add requires mesa-dri-drivers
+- Work around at some meson build problem in rawhide
+
 * Fri Feb 07 2020 Simone Caronni <negativo17@gmail.com> - 8.0.0-2
 - Rebuild for updated FreeRDP.
 
