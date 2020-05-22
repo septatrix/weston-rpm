@@ -3,7 +3,7 @@
 
 Name:           weston
 Version:        %{apiver}.0.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -207,6 +207,9 @@ Common headers for weston
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Fri May 22 2020 Simone Caronni <negativo17@gmail.com> - 8.0.0-4
+- Rebuild for updated FreeRDP.
+
 * Tue Feb 18 2020 Gerd Pokorra <gp@zimt.uni-siegen.de> - 8.0.0-3
 - Add requires mesa-dri-drivers
 - Work around at some meson build problem in rawhide
