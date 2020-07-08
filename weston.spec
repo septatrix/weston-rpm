@@ -3,7 +3,7 @@
 
 Name:           weston
 Version:        %{apiver}.0.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -99,6 +99,9 @@ Common headers for weston
 %setup -q
 
 %build
+# ninja injects -Wl,--no-undefined, which intereferes with LTO, so undo
+# the setting.  Thanks to the SuSE folks for the workaround.
+export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %if %{meson_prob}
 %meson -Dpipewire=false
 %else
@@ -207,6 +210,9 @@ Common headers for weston
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Wed Jul 08 2020 Jeff Law <law@redhat.com> - 8.0.0-5
+- Fix link flags to work with LTO
+
 * Fri May 22 2020 Simone Caronni <negativo17@gmail.com> - 8.0.0-4
 - Rebuild for updated FreeRDP.
 
