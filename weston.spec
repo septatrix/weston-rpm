@@ -3,7 +3,7 @@
 
 Name:           weston
 Version:        %{apiver}.0.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -210,6 +210,9 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 8.0.0-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
 * Wed Jul 08 2020 Jeff Law <law@redhat.com> - 8.0.0-5
 - Fix link flags to work with LTO
 
