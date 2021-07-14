@@ -1,9 +1,8 @@
-%global apiver 8
-%global meson_prob 1
+%global apiver 9
 
 Name:           weston
 Version:        %{apiver}.0.0
-Release:        10%{?dist}
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -11,9 +10,7 @@ URL:            http://wayland.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires:  gcc
-%if %meson_prob
-BuildRequires:  g++
-%endif
+BuildRequires:  gcc-c++
 BuildRequires:  glib2-devel
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pam-devel
@@ -61,6 +58,7 @@ BuildRequires:  pkgconfig(xcb-xfixes)
 BuildRequires:  pkgconfig(xcb-xkb)
 BuildRequires:  pkgconfig(xcursor)
 BuildRequires:  pkgconfig(xkbcommon)
+BuildRequires:  pkgconfig(libpipewire-0.2)
 BuildRequires:  poppler-devel
 BuildRequires:  poppler-glib-devel
 BuildRequires:  gstreamer1-devel
@@ -102,11 +100,7 @@ Common headers for weston
 # ninja injects -Wl,--no-undefined, which intereferes with LTO, so undo
 # the setting.  Thanks to the SuSE folks for the workaround.
 export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
-%if %{meson_prob}
-%meson -Dpipewire=false
-%else
 %meson
-%endif
 %meson_build
 
 %install
@@ -141,6 +135,7 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_libdir}/weston/ivi-shell.so
 %{_libdir}/weston/screen-share.so
 %{_libdir}/weston/systemd-notify.so
+%{_libdir}/weston/kiosk-shell.so
 %{_libdir}/weston/libexec_weston.so*
 %{_libexecdir}/weston-*
 %{_mandir}/man1/*.1*
@@ -158,9 +153,7 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_libdir}/libweston-%{apiver}/fbdev-backend.so
 %{_libdir}/libweston-%{apiver}/gl-renderer.so
 %{_libdir}/libweston-%{apiver}/headless-backend.so
-%if !%{meson_prob}
 %{_libdir}/libweston-%{apiver}/pipewire-plugin.so
-%endif
 %{_libdir}/libweston-%{apiver}/remoting-plugin.so
 %{_libdir}/libweston-%{apiver}/rdp-backend.so
 %{_libdir}/libweston-%{apiver}/wayland-backend.so
@@ -210,6 +203,11 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Tue Apr 12 2022 Dave Olsthoorn <daveo@fedoraproject.org> - 9.0.0-1
+- Update to 9.0.0
+- Use pipewire compat package for plugin
+- (ernunes) Rebased from https://src.fedoraproject.org/rpms/weston/pull-request/3
+
 * Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 8.0.0-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
