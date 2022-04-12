@@ -1,4 +1,4 @@
-%global apiver 9
+%global apiver 10
 
 Name:           weston
 Version:        %{apiver}.0.0
@@ -46,7 +46,7 @@ BuildRequires:  pkgconfig(pixman-1) >= 0.25.2
 BuildRequires:  pkgconfig(wayland-client) >= 1.12.0
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
-BuildRequires:  pkgconfig(wayland-protocols) >= 1.18
+BuildRequires:  pkgconfig(wayland-protocols) >= 1.24
 BuildRequires:  pkgconfig(wayland-scanner)
 BuildRequires:  pkgconfig(wayland-server)
 BuildRequires:  pkgconfig(x11)
@@ -110,19 +110,12 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 # may be standalone tests can be done
 #%%meson_test
 
-%post
-/usr/bin/getent group weston-launch >/dev/null || /usr/sbin/groupadd -r weston-launch
-
-%postun
-/usr/sbin/groupdel weston-launch || true
-
 %files
 %license COPYING
 %doc README.md
 %{_bindir}/weston
 %{_bindir}/weston-debug
 %{_bindir}/weston-info
-%attr(4755,root,root) %{_bindir}/weston-launch
 %{_bindir}/weston-screenshooter
 %{_bindir}/weston-terminal
 %{_bindir}/wcap-decode
@@ -149,8 +142,8 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %files libs
 %license COPYING
 %dir %{_libdir}/libweston-%{apiver}
+%{_libdir}/libweston-%{apiver}/color-lcms.so
 %{_libdir}/libweston-%{apiver}/drm-backend.so
-%{_libdir}/libweston-%{apiver}/fbdev-backend.so
 %{_libdir}/libweston-%{apiver}/gl-renderer.so
 %{_libdir}/libweston-%{apiver}/headless-backend.so
 %{_libdir}/libweston-%{apiver}/pipewire-plugin.so
@@ -181,6 +174,7 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_bindir}/weston-simple-damage
 %{_bindir}/weston-content_protection
 %{_bindir}/weston-simple-dmabuf-egl
+%{_bindir}/weston-simple-dmabuf-feedback
 %{_bindir}/weston-simple-dmabuf-v4l
 %{_bindir}/weston-simple-egl
 %{_bindir}/weston-simple-shm
@@ -203,6 +197,11 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Tue Apr 12 2022 Erico Nunes <ernunes@redhat.com> - 10.0.0-1
+- Update to 10.0.0
+- Remove weston-launch following upstream.
+- Update shipped libraries.
+
 * Tue Apr 12 2022 Dave Olsthoorn <daveo@fedoraproject.org> - 9.0.0-1
 - Update to 9.0.0
 - Use pipewire compat package for plugin
