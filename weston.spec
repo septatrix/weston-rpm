@@ -1,13 +1,13 @@
 %global apiver 10
 
 Name:           weston
-Version:        %{apiver}.0.0
+Version:        %{apiver}.0.1
 Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
-Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
+Source0:        https://gitlab.freedesktop.org/wayland/%{name}/-/releases/%{version}/downloads/%{name}-%{version}.tar.xz
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -197,6 +197,10 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Thu Jul 14 2022 Erico Nunes <ernunes@redhat.com> - 10.0.1-1
+- Update to 10.0.1
+- Update download URL
+
 * Tue Apr 12 2022 Erico Nunes <ernunes@redhat.com> - 10.0.0-1
 - Update to 10.0.0
 - Remove weston-launch following upstream.
