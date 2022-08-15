@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        %{apiver}.0.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -197,6 +197,9 @@ export LDFLAGS="%{?build_ldflags} -Wl,-z,undefs"
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Mon Aug 15 2022 Simone Caronni <negativo17@gmail.com> - 10.0.1-3
+- Rebuild for updated FreeRDP.
+
 * Sat Jul 23 2022 Fedora Release Engineering <releng@fedoraproject.org> - 10.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 
