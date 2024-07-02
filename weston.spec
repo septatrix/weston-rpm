@@ -1,13 +1,14 @@
 %global apiver 13
 
 Name:           weston
-Version:        %{apiver}.0.0
-Release:        5%{?dist}
+Version:        %{apiver}.0.3
+Release:        1%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
 Source0:        https://gitlab.freedesktop.org/wayland/%{name}/-/archive/%{version}/%{name}-%{version}.tar.gz
+Patch0:         0001-vnc-Allow-neatvnc-in-version-0.8.0.patch
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -209,6 +210,10 @@ Common headers for weston
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Wed Jul 17 2024 Nils Kattenbeck <nilskemail+fedora@gmail.com> - 13.0.3-1
+- Update to 13.0.3
+- Fix build error caused by neatvnc version increase
+
 * Tue Feb 20 2024 Neal Gompa <ngompa@fedoraproject.org> - 13.0.0-5
 - Split desktop session into its own subpackage
 
