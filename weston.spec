@@ -2,13 +2,13 @@
 
 Name:           weston
 Version:        %{apiver}.0.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
 URL:            http://wayland.freedesktop.org/
 Source0:        https://gitlab.freedesktop.org/wayland/%{name}/-/archive/%{version}/%{name}-%{version}.tar.gz
-Patch0:         0001-vnc-Allow-neatvnc-in-version-0.8.0.patch
+Patch:          raise-upper-neatvnc-version-bound.patch
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
