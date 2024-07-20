@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        %{apiver}.0.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -210,6 +210,9 @@ Common headers for weston
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Sat Jul 20 2024 Fedora Release Engineering <releng@fedoraproject.org> - 13.0.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
+
 * Wed Jul 17 2024 Nils Kattenbeck <nilskemail+fedora@gmail.com> - 13.0.3-1
 - Update to 13.0.3
 - Fix build error caused by neatvnc version increase
