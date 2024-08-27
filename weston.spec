@@ -2,7 +2,7 @@
 
 Name:           weston
 Version:        %{apiver}.0.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Reference compositor for Wayland
 
 License:        BSD and CC-BY-SA
@@ -124,7 +124,7 @@ Common headers for weston
 #%%meson_test
 
 %files
-%config %{_sysconfdir}/pam.d/weston-remote-access
+%config(noreplace) %{_sysconfdir}/pam.d/weston-remote-access
 %license COPYING
 %doc README.md
 %{_bindir}/weston
@@ -210,6 +210,9 @@ Common headers for weston
 %{_datadir}/libweston-%{apiver}/protocols/
 
 %changelog
+* Tue Aug 27 2024 Neal Gompa <ngompa@fedoraproject.org> - 13.0.3-3
+- Mark weston remote access pam config noreplace (rhbz#2307373)
+
 * Sat Jul 20 2024 Fedora Release Engineering <releng@fedoraproject.org> - 13.0.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
 
